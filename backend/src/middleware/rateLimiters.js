@@ -10,6 +10,8 @@ function createLimiter({ windowMinutes, limit, message, ...options }) {
     limit,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
+    // Vercel sends both Forwarded and X-Forwarded-For; req.ip (via trust proxy) is correct, so the warning is noise.
+    validate: { forwardedHeader: false },
     handler: (_req, _res, next) => next(ApiError.tooManyRequests(message)),
     ...options,
   });
