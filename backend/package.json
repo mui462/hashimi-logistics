@@ -1,0 +1,34 @@
+{
+  "name": "hashimi-logistics-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API for HASHIMI LOGISTICS INC.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "seed:super-admin": "node scripts/seed-super-admin.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "test:db": "node --test --test-concurrency=1 tests/models.database.test.js tests/auth.api.test.js",
+    "db:init": "node scripts/init-database.js",
+    "chatbot:sync": "node scripts/sync-chatbot-knowledge.js",
+    "chatbot:check": "node scripts/check-ollama.js",
+    "db:verify": "node scripts/verify-mongodb.js",
+    "worker": "node scripts/run-worker.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.0",
+    "zod": "^4.6.5"
+  }
+}

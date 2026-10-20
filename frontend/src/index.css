@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  /* Neutral charcoal (no navy), matching the navbar defaults (#111111 / #202020). Class names are unchanged. */
+  --color-ink-950: #111111;
+  --color-ink-900: #1a1a1a;
+  --color-ink-800: #262626;
+  --color-ink-700: #3a3a3a;
+
+  /* Neutral greys for body text, borders and muted surfaces (all text pairs meet WCAG AA). */
+  --color-steel-600: #4a4a4a;
+  --color-steel-500: #6b6b6b;
+  --color-steel-300: #c4c4c2;
+  --color-steel-200: #d6d6d4;
+  --color-steel-100: #ebebea;
+  --color-steel-50: #f5f5f4;
+
+  /* Page surface of the public site (Website theme -> Surface). */
+  --color-surface: #ffffff;
+
+  /* One brand gold across the site, the same as the navbar's Request a Quote button. */
+  --color-signal-400: #d8ad54;
+  --color-signal-500: #c49a3f;
+
+  --color-danger-700: #b42318;
+  --color-danger-800: #912018;
+  --color-danger-50: #fef3f2;
+  --color-success-700: #1e7a45;
+  --color-success-50: #ecfdf3;
+  --color-focus: #0b63ce;
+}
+
+@layer base {
+  html {
+    /* Everything is sized in rem, so this one value scales the whole site. Phones keep the full 16px for readability; tablets and
+       desktops use a smaller base so pages are not oversized. Browser zoom and the visitor's own font-size setting still apply. */
+    font-size: 100%;
+    /* 16px divided by the page base: keeps the content column as wide as the (full-size) navbar so both line up. */
+    --ui-scale: 1;
+    scroll-behavior: smooth;
+    /* The public navbar is fixed (4.5rem tall); anchors and focused sections stop below it. */
+    scroll-padding-top: 5rem;
+  }
+
+  @media (min-width: 48rem) {
+    html {
+      font-size: 93.75%;
+      --ui-scale: 1.0667;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    html {
+      font-size: 87.5%;
+      --ui-scale: 1.142857;
+    }
+  }
+
+  /* The public navbar keeps the size it had before the smaller page base: it is scaled back up by the same ratio (16 / base),
+     so its logo, links and buttons are unchanged while the rest of the page is smaller. */
+  @media (min-width: 48rem) {
+    header[data-navbar-state] {
+      zoom: 1.0667;
+      --ui-scale: 1;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    header[data-navbar-state] {
+      zoom: 1.142857;
+      --ui-scale: 1;
+    }
+  }
+
+  /* From 80rem the navbar has two rows. Anchors stop below it (its real height, 8.5rem at the original 16px, is 9.75rem of the smaller base). */
+  @media (min-width: 80rem) {
+    html {
+      scroll-padding-top: 9.75rem;
+    }
+  }
+
+  body {
+    background-color: #ffffff;
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  [data-surface="dark"] :focus-visible,
+  [data-surface="dark"]:focus-visible {
+    outline-color: var(--color-signal-400);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility lane-rule {
+  height: 6px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-signal-400) 0,
+    var(--color-signal-400) 36px,
+    transparent 36px,
+    transparent 60px
+  );
+}
+
+@layer components {
+  /* Entrance animation (components/common/Reveal.jsx). Short, eased, staggered with --reveal-delay; never loops. */
+  /* Duration, travel, starting opacity and stagger come from the Website theme (themeCssVars); these are the defaults. */
+  .reveal {
+    opacity: var(--reveal-start-opacity, 0);
+    transform: translateY(var(--reveal-distance, 16px));
+    transition:
+      opacity var(--reveal-duration, 600ms) cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform var(--reveal-duration, 600ms) cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--reveal-delay, 0ms) * var(--reveal-stagger-scale, 1));
+  }
+
+  .reveal[data-variant="fade"] {
+    transform: none;
+  }
+
+  .reveal[data-variant="zoom"] {
+    transform: scale(0.97);
+  }
+
+  /* A section whose animation is set to None in the Homepage editor. */
+  .reveal[data-variant="none"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* FAQ answers ease in when opened (closed answers stay `hidden`, so assistive technology is unaffected). */
+  @keyframes accordion-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .accordion-panel:not([hidden]) {
+    animation: accordion-in 220ms ease-out;
+  }
+
+  /* Glass surface for cards on dark sections: translucent charcoal, hairline border, light blur (none on small screens). */
+  .glass-panel {
+    background-color: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: var(--site-card-radius, 0px);
+  }
+
+  /* Light glass card (Homepage editor -> Card style: Glass). Opaque enough for dark text on any section background. */
+  .glass-card {
+    background-color: rgb(255 255 255 / 0.85);
+    border: 1px solid rgb(0 0 0 / 0.08);
+    border-radius: var(--site-card-radius, 0px);
+  }
+
+  @media (min-width: 64rem) {
+    .glass-card,
+    .glass-panel {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+  }
+
+  @media print {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

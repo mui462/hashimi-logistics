@@ -1,0 +1,431 @@
+{
+  "company": {
+    "name": "HASHIMI LOGISTICS INC.",
+    "tagline": "Freight Brokerage & Transportation Solutions",
+    "supportingStatement": "Domestic & Cross-Border Freight Solutions Across North America"
+  },
+  "routes": [
+    {
+      "label": "Home",
+      "path": "/"
+    },
+    {
+      "label": "About",
+      "path": "/about"
+    },
+    {
+      "label": "Services",
+      "path": "/services"
+    },
+    {
+      "label": "Industries",
+      "path": "/industries"
+    },
+    {
+      "label": "Service Areas",
+      "path": "/service-areas"
+    },
+    {
+      "label": "For Shippers",
+      "path": "/for-shippers"
+    },
+    {
+      "label": "For Carriers",
+      "path": "/for-carriers"
+    },
+    {
+      "label": "How It Works",
+      "path": "/how-it-works"
+    },
+    {
+      "label": "Track Shipment",
+      "path": "/track-shipment"
+    },
+    {
+      "label": "Request a Quote",
+      "path": "/request-quote"
+    },
+    {
+      "label": "Become a Carrier",
+      "path": "/become-a-carrier"
+    },
+    {
+      "label": "Carrier Resources",
+      "path": "/carrier-resources"
+    },
+    {
+      "label": "Resources",
+      "path": "/resources"
+    },
+    {
+      "label": "FAQ",
+      "path": "/faq"
+    },
+    {
+      "label": "Contact",
+      "path": "/contact"
+    },
+    {
+      "label": "Privacy Policy",
+      "path": "/privacy-policy"
+    },
+    {
+      "label": "Terms and Conditions",
+      "path": "/terms"
+    },
+    {
+      "label": "Full Truckload (FTL)",
+      "path": "/services/full-truckload"
+    },
+    {
+      "label": "Less-Than-Truckload (LTL)",
+      "path": "/services/ltl"
+    },
+    {
+      "label": "Dry Van",
+      "path": "/services/dry-van"
+    },
+    {
+      "label": "Reefer (Temperature-Controlled)",
+      "path": "/services/reefer"
+    },
+    {
+      "label": "Flatbed",
+      "path": "/services/flatbed"
+    },
+    {
+      "label": "Expedited Freight",
+      "path": "/services/expedited"
+    },
+    {
+      "label": "Specialized Freight",
+      "path": "/services/specialized"
+    },
+    {
+      "label": "Cross-Border Freight",
+      "path": "/services/cross-border"
+    },
+    {
+      "label": "Manufacturing freight",
+      "path": "/industries/manufacturing"
+    },
+    {
+      "label": "Construction freight",
+      "path": "/industries/construction"
+    },
+    {
+      "label": "Automotive freight",
+      "path": "/industries/automotive"
+    },
+    {
+      "label": "Retail freight",
+      "path": "/industries/retail"
+    },
+    {
+      "label": "Food & Beverage freight",
+      "path": "/industries/food-beverage"
+    },
+    {
+      "label": "Agriculture freight",
+      "path": "/industries/agriculture"
+    },
+    {
+      "label": "Industrial freight",
+      "path": "/industries/industrial"
+    },
+    {
+      "label": "Consumer Goods freight",
+      "path": "/industries/consumer-goods"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "company",
+      "title": "About HASHIMI LOGISTICS INC.",
+      "url": "/about",
+      "text": "HASHIMI LOGISTICS INC. is a freight brokerage. Freight Brokerage & Transportation Solutions. Domestic & Cross-Border Freight Solutions Across North America. HASHIMI LOGISTICS INC. is a freight brokerage providing transportation solutions for shippers and carriers across North America. We coordinate domestic and cross-border truck freight and work with a network of carriers to move our customers’ shipments. Mission: To simplify freight transportation through reliable carrier relationships, responsive service and practical logistics solutions. Vision: To become a trusted transportation partner for businesses that value reliability, transparency and service. Values: Reliability (We aim to be dependable in how we plan, communicate and follow through.) Integrity (We are honest with shippers and carriers about what we can and cannot do.) Communication (We keep people informed before, during and after the move.) Efficiency (We keep processes simple so freight gets moving.) Partnership (We build working relationships with the shippers and carriers we serve.)."
+    },
+    {
+      "id": "trust",
+      "title": "What sets us apart",
+      "url": "/about",
+      "text": "Reliable Capacity: A carrier network built around dependable coverage. Nationwide Coverage: Freight coordination across the United States. Cross-Border Expertise: Transportation between the U.S., Canada and Mexico. Responsive Service: Communication from our team while your freight moves."
+    },
+    {
+      "id": "why",
+      "title": "Why choose us",
+      "url": "/",
+      "text": "Reliable Carrier Network: We work with carriers who are matched to your freight, lane and equipment needs. Professional Freight Coordination: One team coordinates pickup, transit and delivery so you are not chasing details. Clear Communication: Straightforward updates from request through delivery. Flexible Transportation Solutions: Full truckload, LTL and specialized equipment to suit the shipment in front of you. Domestic & Cross-Border Capability: One partner for freight inside the U.S. and between the U.S., Canada and Mexico. Customer-Focused Service: We start with what your shipment needs and build the move around it."
+    },
+    {
+      "id": "service-full-truckload",
+      "title": "Full Truckload (FTL)",
+      "url": "/services/full-truckload",
+      "text": "Dedicated trailer capacity for shipments that fill or nearly fill a truck. Full truckload moves one shipper’s freight on one trailer, point to point. It suits shipments with enough volume or weight to justify a dedicated truck, or freight that should not be handled along the way. Freight it handles: Palletized and floor-loaded freight; Large or heavy shipments; Time-sensitive, point-to-point moves; Recurring lanes and one-time moves. Benefits: Dedicated trailer for your shipment; Direct movement from origin to destination; Less handling between pickup and delivery; One coordination contact from request to delivery. Equipment: Dry van trailers; Refrigerated (reefer) trailers; Flatbed trailers; Other equipment on request. Industries it commonly serves: Manufacturing, Retail, Consumer Goods, Industrial."
+    },
+    {
+      "id": "service-ltl",
+      "title": "Less-Than-Truckload (LTL)",
+      "url": "/services/ltl",
+      "text": "Share trailer space for smaller shipments that do not need a full truck. Less-than-truckload moves smaller shipments by sharing trailer space with other freight. It can be a practical choice when a shipment is too small for a full truck. Freight it handles: Palletized freight; Smaller commercial shipments; Shipments that do not fill a trailer; Regional and longer-distance moves. Benefits: Pay for the space your freight uses; A practical fit for smaller loads; Coordinated by our team from quote to delivery. Equipment: Dry van trailers; Liftgate or special handling when required. Industries it commonly serves: Retail, Consumer Goods, Industrial, Manufacturing."
+    },
+    {
+      "id": "service-dry-van",
+      "title": "Dry Van",
+      "url": "/services/dry-van",
+      "text": "Enclosed trailers for general freight that needs protection from the weather. Dry van trailers are enclosed and non-refrigerated. They are the common choice for general palletized and boxed freight that should stay protected during transit. Freight it handles: Palletized and boxed goods; Packaged consumer products; Non-temperature-controlled freight; Dock-to-dock deliveries. Benefits: Enclosed, weather-protected freight; Suited to dock loading and unloading; Widely used for general freight. Equipment: Enclosed dry van trailers. Industries it commonly serves: Retail, Consumer Goods, Automotive, Manufacturing."
+    },
+    {
+      "id": "service-reefer",
+      "title": "Reefer (Temperature-Controlled)",
+      "url": "/services/reefer",
+      "text": "Refrigerated trailers for freight that must stay within a set temperature range. Reefer trailers carry a refrigeration unit to hold a requested temperature. Tell us the temperature requirements when you request a quote so we can coordinate suitable equipment. Freight it handles: Chilled and frozen products; Temperature-sensitive goods; Freight with specific temperature instructions. Benefits: Temperature requirements captured at quote stage; Equipment matched to your instructions; Clear communication throughout the move. Equipment: Refrigerated (reefer) trailers. Industries it commonly serves: Food & Beverage, Agriculture, Consumer Goods."
+    },
+    {
+      "id": "service-flatbed",
+      "title": "Flatbed",
+      "url": "/services/flatbed",
+      "text": "Open-deck trailers for oversized, heavy or hard-to-load freight. Flatbed trailers have an open deck that can be loaded from the top or sides. They suit freight that does not fit inside an enclosed trailer or that needs a crane or forklift to load. Freight it handles: Building and construction materials; Machinery and equipment; Steel and other heavy goods; Freight that is loaded from the side or top. Benefits: Flexible loading for awkward freight; Suited to heavy or oversized items; Securement planned with the carrier. Equipment: Flatbed trailers; Tarps and securement as required. Industries it commonly serves: Construction, Industrial, Manufacturing."
+    },
+    {
+      "id": "service-expedited",
+      "title": "Expedited Freight",
+      "url": "/services/expedited",
+      "text": "Priority transportation for shipments with tight timelines. When a shipment has a tight deadline, expedited service prioritizes speed of coordination and movement. Share your required pickup and delivery dates and we will confirm what is possible. Freight it handles: Urgent, deadline-driven shipments; Production-critical parts and supplies; Last-minute or unplanned moves. Benefits: Prioritized coordination; Your required dates are shared with the team up front; Direct communication while the shipment moves. Equipment: Equipment chosen to suit the shipment and timeline. Industries it commonly serves: Automotive, Manufacturing, Retail."
+    },
+    {
+      "id": "service-specialized",
+      "title": "Specialized Freight",
+      "url": "/services/specialized",
+      "text": "Coordination for freight with unusual size, handling or equipment needs. Some freight needs more than a standard trailer. Describe your shipment and we will work with you and our carrier network to find a suitable way to move it. Freight it handles: Oversized or unusual freight; Freight with special handling instructions; Shipments needing non-standard equipment. Benefits: Requirements reviewed before booking; Carrier selection based on the freight; Clear communication on what is needed. Equipment: Equipment discussed per shipment. Industries it commonly serves: Industrial, Construction, Manufacturing."
+    },
+    {
+      "id": "service-cross-border",
+      "title": "Cross-Border Freight",
+      "url": "/services/cross-border",
+      "text": "Transportation between the United States, Canada and Mexico. We coordinate truck transportation between the United States and Canada, and between the United States and Mexico. This website does not offer customs brokerage or legal advice; border paperwork remains the shipper’s responsibility to arrange with qualified professionals. Freight it handles: U.S. ↔ Canada truck freight; U.S. ↔ Mexico truck freight; Freight moving on dry van, reefer or flatbed equipment. Benefits: Transportation coordinated across borders; Cross-border capable carrier relationships; Shipment visibility and professional communication. Equipment: Dry van trailers; Reefer trailers; Flatbed trailers. Industries it commonly serves: Automotive, Manufacturing, Food & Beverage, Retail."
+    },
+    {
+      "id": "services-overview",
+      "title": "Freight services",
+      "url": "/services",
+      "text": "Services offered: Full Truckload (FTL), Less-Than-Truckload (LTL), Dry Van, Reefer (Temperature-Controlled), Flatbed, Expedited Freight, Specialized Freight, Cross-Border Freight."
+    },
+    {
+      "id": "industry-manufacturing",
+      "title": "Manufacturing freight",
+      "url": "/industries/manufacturing",
+      "text": "Raw materials, components and finished goods moving between plants and customers. Manufacturers depend on inbound materials and outbound finished goods arriving as planned. We help coordinate the truck transportation that connects plants, suppliers and customers. Typical freight: Raw materials and components; Work-in-progress between facilities; Finished goods to customers and distribution points. Planning considerations: Pickup and delivery appointment windows; Recurring lanes between regular locations; Equipment type that matches how the freight is loaded. Relevant services: Full Truckload (FTL), Less-Than-Truckload (LTL), Dry Van, Flatbed."
+    },
+    {
+      "id": "industry-construction",
+      "title": "Construction freight",
+      "url": "/industries/construction",
+      "text": "Building materials and equipment for job sites and suppliers. Construction freight is often heavy, long or awkward to load. We coordinate suitable equipment and keep you informed about pickup and delivery. Typical freight: Building and construction materials; Equipment and machinery; Supplies for job sites. Planning considerations: Open-deck equipment for heavy or oversized items; Securement planning with the carrier; Job-site access and delivery instructions. Relevant services: Flatbed, Full Truckload (FTL), Specialized Freight."
+    },
+    {
+      "id": "industry-automotive",
+      "title": "Automotive freight",
+      "url": "/industries/automotive",
+      "text": "Parts, components and supplies for production and aftermarket supply chains. Automotive supply chains run on schedules. We coordinate transportation for parts and components, including freight that crosses the U.S., Canadian and Mexican borders. Typical freight: Parts and components; Aftermarket supplies; Packaged and palletized automotive freight. Planning considerations: Delivery windows tied to production schedules; Expedited options for urgent parts; Cross-border lanes between North American markets. Relevant services: Dry Van, Expedited Freight, Cross-Border Freight, Full Truckload (FTL)."
+    },
+    {
+      "id": "industry-retail",
+      "title": "Retail freight",
+      "url": "/industries/retail",
+      "text": "Store, warehouse and distribution center replenishment. Retail freight moves between suppliers, distribution centers and stores. We coordinate trucks for regular replenishment and one-off moves. Typical freight: Palletized store replenishment; Inbound supplier freight; Distribution center transfers. Planning considerations: Receiving appointments at distribution centers; Pallet counts and freight dimensions at quote stage; Shipment size: full truckload or LTL. Relevant services: Dry Van, Less-Than-Truckload (LTL), Full Truckload (FTL), Expedited Freight."
+    },
+    {
+      "id": "industry-food-beverage",
+      "title": "Food & Beverage freight",
+      "url": "/industries/food-beverage",
+      "text": "Ambient and temperature-controlled food and beverage freight. Food and beverage products may need enclosed or temperature-controlled trailers. Share your temperature instructions when you request a quote. Typical freight: Packaged food and beverages; Chilled and frozen products; Ingredients and supplies. Planning considerations: Required temperature range; Trailer cleanliness and condition requirements you specify; Delivery appointment times. Relevant services: Reefer (Temperature-Controlled), Dry Van, Full Truckload (FTL), Cross-Border Freight."
+    },
+    {
+      "id": "industry-agriculture",
+      "title": "Agriculture freight",
+      "url": "/industries/agriculture",
+      "text": "Agricultural products and supplies moving from source to market. Agricultural freight can be seasonal and time-sensitive. We coordinate transportation for products and supplies moving to processors, distributors and markets. Typical freight: Produce and perishable goods; Packaged agricultural products; Farm and agricultural supplies. Planning considerations: Temperature requirements for perishable freight; Seasonal changes in shipping volume; Pickup locations that are remote from major facilities. Relevant services: Reefer (Temperature-Controlled), Flatbed, Full Truckload (FTL), Cross-Border Freight."
+    },
+    {
+      "id": "industry-industrial",
+      "title": "Industrial freight",
+      "url": "/industries/industrial",
+      "text": "Equipment, parts and materials for industrial operations. Industrial shipments range from palletized parts to heavy machinery. We help match each shipment with suitable equipment and carriers. Typical freight: Machinery and equipment; Industrial parts and supplies; Metal and bulk materials. Planning considerations: Weight and dimensions of each piece; Loading method: dock, forklift or crane; Specialized equipment where freight is unusual. Relevant services: Flatbed, Specialized Freight, Less-Than-Truckload (LTL), Full Truckload (FTL)."
+    },
+    {
+      "id": "industry-consumer-goods",
+      "title": "Consumer Goods freight",
+      "url": "/industries/consumer-goods",
+      "text": "Packaged goods moving from producers to retailers and distributors. Consumer goods typically move as palletized or boxed freight through distribution networks. We coordinate the truck transportation between those points. Typical freight: Packaged consumer products; Palletized and boxed goods; Seasonal and promotional inventory. Planning considerations: Shipment size and pallet count; Receiving requirements at the delivery location; Timing around seasonal demand. Relevant services: Dry Van, Less-Than-Truckload (LTL), Full Truckload (FTL), Reefer (Temperature-Controlled)."
+    },
+    {
+      "id": "industries-overview",
+      "title": "Industries served",
+      "url": "/industries",
+      "text": "Industries served: Manufacturing, Construction, Automotive, Retail, Food & Beverage, Agriculture, Industrial, Consumer Goods."
+    },
+    {
+      "id": "service-areas",
+      "title": "Service areas",
+      "url": "/service-areas",
+      "text": "U.S. Domestic Freight: Truckload and LTL freight coordinated within the United States. U.S. ↔ Canada: Cross-border truck freight between the United States and Canada. U.S. ↔ Mexico: Cross-border truck freight between the United States and Mexico. Cross-border: We coordinate truck transportation between the United States and its neighbours, with the same professional communication on both sides of the border. U.S. ↔ Canada: Truck freight between the United States and Canada. U.S. ↔ Mexico: Truck freight between the United States and Mexico. Hashimi Logistics coordinates transportation. This website does not offer customs brokerage or legal services."
+    },
+    {
+      "id": "cross-border",
+      "title": "Cross-Border Freight Across North America",
+      "url": "/service-areas",
+      "text": "We coordinate truck transportation between the United States and its neighbours, with the same professional communication on both sides of the border. Border Coordination: Transportation planned with the border crossing in mind. Cross-Border Carrier Capacity: Carrier relationships suited to cross-border moves. Shipment Visibility: Status updates, including border statuses on cross-border shipments. Professional Communication: Clear contact before, during and after the crossing. Hashimi Logistics coordinates transportation. This website does not offer customs brokerage or legal services."
+    },
+    {
+      "id": "for-shippers",
+      "title": "For shippers",
+      "url": "/for-shippers",
+      "text": "Carrier Network: Access to a network of carriers matched to your freight, equipment and lanes. Freight Coordination: Our team coordinates the move from quote request through delivery. Shipment Visibility: Look up a shipment with its tracking number on the Track Shipment page. Flexible Transportation: Full truckload, LTL and specialized equipment for different kinds of freight. Cross-Border Support: Transportation between the U.S., Canada and Mexico. Responsive Communication: Clear communication with a team that is easy to reach."
+    },
+    {
+      "id": "for-carriers",
+      "title": "For carriers",
+      "url": "/for-carriers",
+      "text": "Freight Opportunities: Opportunities to haul freight across domestic and cross-border lanes. Professional Support: A coordination team that supports carriers during the move. Digital Documentation: Submit onboarding and shipment documents online. Shipment Coordination: Clear pickup and delivery details for each load. Cross-Border Opportunities: Opportunities for carriers capable of crossing the border. Transparent Process: A clear process from application to hauling freight. Requirements our team confirms during onboarding: Active operating authority; Valid insurance coverage; A completed W-9; A signed carrier agreement; Contact and equipment details."
+    },
+    {
+      "id": "carrier-resources",
+      "title": "Carrier resources",
+      "url": "/carrier-resources",
+      "text": "Carrier Onboarding Guide: Apply through the Become a Carrier page. Our team will review your application and contact you about next steps. Document Requirements: Documents such as a W-9, insurance, operating authority and a carrier agreement may be requested. Our team will confirm what is required. Payment Information: Carrier payment terms are provided according to the applicable agreement. They are not published on this website. POD Instructions: Proof of delivery instructions are provided to carriers by our team. Carrier FAQ: Answers to common questions from carriers. Support: Questions about onboarding or a load? Contact our team."
+    },
+    {
+      "id": "become-carrier",
+      "title": "Become a carrier",
+      "url": "/become-a-carrier",
+      "text": "Carriers apply online on the Become a Carrier page. Our team reviews the application and contacts the applicant about next steps. Requirements our team confirms during onboarding: Active operating authority; Valid insurance coverage; A completed W-9; A signed carrier agreement; Contact and equipment details."
+    },
+    {
+      "id": "how-it-works",
+      "title": "How it works",
+      "url": "/how-it-works",
+      "text": "Step 1, Tell Us About Your Shipment: Submit a quote request with pickup and delivery locations, freight details and any special requirements. Step 2, We Coordinate Transportation: Our team reviews your request and works out the right equipment, service type and carrier approach. Step 3, Carrier Assignment: A suitable carrier is selected and confirmed for your shipment. Step 4, Pickup: The carrier collects the freight from the origin location. Step 5, In Transit: Your freight travels to its destination. For cross-border moves, the shipment also passes through the border. Step 6, Delivery: The carrier delivers the freight to the destination. Step 7, Shipment Completion: Delivery is confirmed and the shipment is closed out with you."
+    },
+    {
+      "id": "request-quote",
+      "title": "Request a quote",
+      "url": "/request-quote",
+      "text": "Quote requests are made on the Request a Quote page, in five short steps: pickup and delivery, freight details, transportation, contact and additional information. The assistant cannot price a shipment, submit a quote or book freight."
+    },
+    {
+      "id": "track-shipment",
+      "title": "Track a shipment",
+      "url": "/track-shipment",
+      "text": "The Track Shipment page looks up a shipment with the tracking number provided by our team. The assistant cannot look up or state the status of any shipment."
+    },
+    {
+      "id": "faq-what-freight",
+      "title": "What kind of freight can Hashimi Logistics help move?",
+      "url": "/faq",
+      "text": "What kind of freight can Hashimi Logistics help move? We coordinate truck transportation, including full truckload, LTL, dry van, reefer, flatbed, expedited, specialized and cross-border freight. If your shipment does not fit one of those, describe it in a quote request and our team will review it and confirm available options."
+    },
+    {
+      "id": "faq-how-quote",
+      "title": "How do I request a quote?",
+      "url": "/faq",
+      "text": "How do I request a quote? Use the Request a Quote form and tell us about pickup and delivery, your freight, the service you need and how to reach you. Our team will review your shipment details and confirm available options."
+    },
+    {
+      "id": "faq-cross-border",
+      "title": "Do you coordinate freight between the U.S., Canada and Mexico?",
+      "url": "/faq",
+      "text": "Do you coordinate freight between the U.S., Canada and Mexico? Yes. We coordinate truck transportation between the United States and Canada and between the United States and Mexico. This website does not offer customs brokerage or legal advice."
+    },
+    {
+      "id": "faq-tracking",
+      "title": "How can I track my shipment?",
+      "url": "/faq",
+      "text": "How can I track my shipment? The Track Shipment page lets you look up a shipment with the tracking number provided by our team. Online tracking depends on the shipment being set up for it, so if you cannot find a shipment, contact us."
+    },
+    {
+      "id": "faq-carriers",
+      "title": "How do carriers work with Hashimi Logistics?",
+      "url": "/faq",
+      "text": "How do carriers work with Hashimi Logistics? Carriers can apply through the Become a Carrier page. Our team will review the application and contact the carrier about next steps."
+    },
+    {
+      "id": "faq-quote-info",
+      "title": "What information should I include in a quote request?",
+      "url": "/faq",
+      "text": "What information should I include in a quote request? Pickup and delivery locations, dates, a description of the freight, weight and quantity, the equipment you need, and any temperature or handling requirements. The more detail you share, the easier it is to coordinate the right transportation."
+    },
+    {
+      "id": "faq-quote-response",
+      "title": "How quickly will I hear back about my quote?",
+      "url": "/faq",
+      "text": "How quickly will I hear back about my quote? Response times may vary depending on shipment details and operational requirements. If your shipment is urgent, say so in your request or contact our team directly."
+    },
+    {
+      "id": "faq-shipper-equipment",
+      "title": "Can I choose the type of trailer?",
+      "url": "/faq",
+      "text": "Can I choose the type of trailer? Yes. Tell us which equipment you need in the quote request. If you are unsure, describe the freight and we will help you choose."
+    },
+    {
+      "id": "faq-shipper-ltl",
+      "title": "Do I need a full truckload?",
+      "url": "/faq",
+      "text": "Do I need a full truckload? Not always. Full truckload suits larger shipments, while LTL can suit smaller shipments that do not fill a trailer. Share your freight details and we will help you decide."
+    },
+    {
+      "id": "faq-carrier-docs",
+      "title": "What documents do carriers need to provide?",
+      "url": "/faq",
+      "text": "What documents do carriers need to provide? Documents such as a W-9, insurance, operating authority and a carrier agreement are requested after we review your application. Our team will confirm which documents are required for your situation and how to send them."
+    },
+    {
+      "id": "faq-carrier-payment",
+      "title": "What are the payment terms for carriers?",
+      "url": "/faq",
+      "text": "What are the payment terms for carriers? Carrier payment terms are provided according to the applicable agreement. They are not published on this website."
+    },
+    {
+      "id": "faq-track-statuses",
+      "title": "What do the tracking statuses mean?",
+      "url": "/faq",
+      "text": "What do the tracking statuses mean? Statuses describe where a shipment is in its journey, for example booked, dispatched, picked up, in transit and delivered. Cross-border shipments can also show border statuses; domestic shipments do not."
+    },
+    {
+      "id": "faq-track-missing",
+      "title": "Why can’t I find my tracking number?",
+      "url": "/faq",
+      "text": "Why can’t I find my tracking number? Check the number for typing errors. If it still cannot be found, contact our team and we will help."
+    },
+    {
+      "id": "faq-border-docs",
+      "title": "Do you provide customs brokerage?",
+      "url": "/faq",
+      "text": "Do you provide customs brokerage? No. This website does not offer customs brokerage or legal services. We coordinate the transportation of cross-border freight."
+    },
+    {
+      "id": "faq-general-areas",
+      "title": "Where do you coordinate freight?",
+      "url": "/faq",
+      "text": "Where do you coordinate freight? Across the United States, Canada and Mexico: domestic U.S. freight and cross-border freight between the U.S. and Canada and between the U.S. and Mexico."
+    },
+    {
+      "id": "faq-general-contact",
+      "title": "How do I contact the team?",
+      "url": "/faq",
+      "text": "How do I contact the team? Use the Contact page to send us a message. Phone and email details are shown on this website once they are published."
+    },
+    {
+      "id": "contact",
+      "title": "Contact",
+      "url": "/contact",
+      "text": "No phone number, email address or street address is published in the built-in website content. The Contact page has a form for sending the team a message."
+    },
+    {
+      "id": "legal",
+      "title": "Privacy Policy and Terms",
+      "url": "/privacy-policy",
+      "text": "The Privacy Policy and Terms and Conditions pages are placeholder structures that have not been finalised. Their legal text is not available."
+    }
+  ]
+}
