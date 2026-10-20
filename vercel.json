@@ -3,10 +3,13 @@
   "buildCommand": "npm run build:frontend",
   "outputDirectory": "frontend/dist",
   "functions": {
-    "api/index.js": { "maxDuration": 30, "includeFiles": "backend/**" }
+    "api/index.js": {
+      "maxDuration": 30,
+      "includeFiles": "backend/**"
+    }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/((?!assets/|.*\..*).*)", "destination": "/index.html" }
+    { "source": "/api/:path*", "destination": "/api" },
+    { "source": "/:path*", "destination": "/index.html" }
   ]
 }
