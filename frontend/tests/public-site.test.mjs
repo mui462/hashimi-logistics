@@ -198,7 +198,7 @@ describe('Phase 4 public website', () => {
     };
     const FORMER_ROUTES = ['/', '/about', '/services', '/industries', '/service-areas', '/for-shippers', '/for-carriers', '/resources', '/track-shipment', '/become-a-carrier', '/request-quote'];
 
-    test('two rows: logo and the four actions on top, the main links (with a More dropdown) below; every former route stays reachable', async () => {
+    test('two rows: logo and the actions (Sign In menu, Track Shipment, Request a Quote) on top, the main links (with a More dropdown) below; every former route stays reachable', async () => {
       const page = await visit('/services/ltl');
       const nav = document.querySelector('nav[aria-label="Primary"]');
       const topLevel = [...nav.querySelectorAll(':scope > div > ul > li')].map((li) => li.firstElementChild.textContent.trim());
@@ -214,9 +214,12 @@ describe('Phase 4 public website', () => {
       assert.equal(track.getAttribute('href'), '/track-shipment');
       assert.equal(quote.getAttribute('href'), '/request-quote');
       const login = (label) => [...header().querySelectorAll('a')].find((x) => x.textContent === label);
-      assert.equal(login('Carrier Login').getAttribute('href'), '/login?portal=carrier');
-      assert.equal(login('Customer Login').getAttribute('href'), '/login?portal=customer');
-      assert.ok(!nav.contains(track) && !nav.contains(login('Carrier Login')), 'actions live in the top row, not the link row');
+      assert.equal(login('Customer Sign In').getAttribute('href'), '/login?portal=customer&step=choose');
+      assert.equal(login('Carrier Sign In').getAttribute('href'), '/login?portal=carrier&step=choose');
+      assert.equal(login('Super Admin Sign In').getAttribute('href'), '/admin/login');
+      const signIn = [...header().querySelectorAll('button[aria-expanded]')].find((b) => b.textContent.includes('Sign In'));
+      assert.ok(signIn, 'the Sign In menu button exists in the top row');
+      assert.ok(!nav.contains(track) && !nav.contains(login('Carrier Sign In')) && !nav.contains(signIn), 'actions live in the top row, not the link row');
       assert.ok(header().querySelector('a[aria-label$="home"][href="/"]'), 'logo links home');
       await page.unmount();
     });
@@ -239,52 +242,44 @@ describe('Phase 4 public website', () => {
       await page.unmount();
     });
 
-    test('with no saved settings (or the settings API down) it is light charcoal glass over the hero, solid charcoal after scrolling, and glass again at the top', async () => {
+    test('with no saved settings (or the settings API down) it is a solid graphite bar at every scroll position', async () => {
       const page = await visit('/');
-      assert.equal(header().dataset.navbarState, 'transparent');
-      assert.equal(navVar('--nav-bg'), 'rgba(17, 17, 17, 0.35)', 'only the background is see-through');
-      assert.equal(navVar('--nav-blur'), '8px');
+      assert.equal(header().dataset.navbarState, 'solid');
+      assert.equal(navVar('--nav-bg'), '#22252A');
+      assert.equal(navVar('--nav-blur'), '0px');
       assert.equal(navVar('--nav-quote-bg'), 'rgba(216, 173, 84, 1)', 'gold Request a Quote');
       assert.equal(navVar('--nav-track-bg'), 'rgba(216, 173, 84, 0)', 'outlined Track Shipment');
       assert.doesNotMatch(header().getAttribute('style'), /#0C1B2B|#11263C|rgba\(12, 27, 43|navy/i, 'no navy tint');
       await scrollTo(200);
       assert.equal(header().dataset.navbarState, 'solid');
-      assert.equal(header().dataset.scrolled, 'true');
-      assert.equal(navVar('--nav-bg'), '#111111');
-      assert.equal(navVar('--nav-blur'), '0px');
+      assert.equal(navVar('--nav-bg'), '#22252A');
       await scrollTo(0);
-      assert.equal(header().dataset.navbarState, 'transparent');
+      assert.equal(header().dataset.navbarState, 'solid', 'still solid back at the top');
       await page.unmount();
     });
 
     test('applies the saved appearance from the site settings, and ignores malformed values', async () => {
-      withAppearance({ hero: { backgroundColor: '#222222', backgroundOpacity: 50, textColor: 'red;}*{display:none', blur: 99 }, scrolled: { backgroundColor: '#303030', scrollThreshold: 300 }, quoteButton: { backgroundColor: '#C9A045' } });
+      withAppearance({ scrolled: { backgroundColor: '#303030', textColor: 'red;}*{display:none', scrollThreshold: 9999 }, quoteButton: { backgroundColor: '#C9A045' } });
       const page = await visit('/');
-      assert.equal(navVar('--nav-bg'), 'rgba(34, 34, 34, 0.5)');
+      assert.equal(navVar('--nav-bg'), '#303030', 'a saved colour is used');
       assert.equal(navVar('--nav-text'), '#FFFFFF', 'a malformed colour falls back to the default');
-      assert.equal(navVar('--nav-blur'), '8px', 'an out-of-range blur falls back to the default');
       assert.equal(navVar('--nav-quote-bg'), 'rgba(201, 160, 69, 1)');
-      await scrollTo(200);
-      assert.equal(header().dataset.navbarState, 'transparent', 'the saved 300px threshold is respected');
-      await scrollTo(350);
-      assert.equal(navVar('--nav-bg'), '#303030');
-      await scrollTo(0);
+      assert.equal(navVar('--nav-blur'), '0px');
       handler = null;
       await page.unmount();
     });
 
-    test('respects the transparent-over-hero and solid-on-scroll switches', async () => {
-      withAppearance({ hero: { transparentEnabled: false } });
-      let page = await visit('/');
-      assert.equal(header().dataset.navbarState, 'solid', 'transparent mode off: solid at the top');
-      await page.unmount();
-      withAppearance({ scrolled: { solidEnabled: false } });
-      page = await visit('/');
-      await scrollTo(500);
-      assert.equal(header().dataset.navbarState, 'transparent', 'solid-on-scroll off: stays glass');
-      await scrollTo(0);
-      handler = null;
-      await page.unmount();
+    test('the bar is solid whatever the switches say: a saved "transparent over the hero" is an old default and is ignored', async () => {
+      for (const appearance of [{ hero: { transparentEnabled: false } }, { hero: { transparentEnabled: true } }, { scrolled: { solidEnabled: false } }]) {
+        withAppearance(appearance);
+        const page = await visit('/');
+        assert.equal(header().dataset.navbarState, 'solid', JSON.stringify(appearance));
+        await scrollTo(500);
+        assert.equal(header().dataset.navbarState, 'solid', JSON.stringify(appearance));
+        await scrollTo(0);
+        handler = null;
+        await page.unmount();
+      }
     });
 
     test('mobile menu: every link (the dropdown included) and both actions, page scroll locked while open, Escape closes and returns focus, navigating closes it', async () => {
@@ -306,7 +301,7 @@ describe('Phase 4 public website', () => {
       assert.equal(sublist.hidden, false);
       assert.deepEqual([...sublist.querySelectorAll('a')].map((a) => a.textContent), ['Become a Carrier', 'FAQ']);
       assert.ok(menu.querySelector('a[href="/request-quote"]') && menu.querySelector('a[href="/track-shipment"]'));
-      assert.ok(menu.querySelector('a[href="/login?portal=carrier"]') && menu.querySelector('a[href="/login?portal=customer"]'), 'both portal logins are in the menu');
+      assert.ok(menu.querySelector('a[href="/login?portal=carrier&step=choose"]') && menu.querySelector('a[href="/login?portal=customer&step=choose"]') && menu.querySelector('a[href="/admin/login"]'), 'the three sign-in options are in the menu');
       await act(async () => document.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape' })));
       assert.equal(document.getElementById('mobile-menu'), null);
       assert.equal(document.activeElement, toggle);
@@ -329,7 +324,8 @@ describe('Phase 4 public website', () => {
       const mark = document.querySelector('header a[aria-label$="home"] svg');
       assert.ok(mark, 'built-in mark shown (no CMS logo in tests)');
       assert.match(mark.innerHTML, /stroke-\[#f2a900\]/);
-      assert.match(mark.innerHTML, /stroke-\[#11263c\]/);
+      assert.match(mark.innerHTML, /fill-\[#11263c\]/, 'navy tile');
+      assert.match(mark.innerHTML, /stroke-white/, 'the second chevron is white on the navy tile (navy only on the dark-footer variant)');
       const hero = document.querySelector('[data-hero="home"]');
       const subtitle = [...hero.querySelectorAll('p')].find((p) => /font-semibold/.test(p.className));
       assert.match(subtitle.className, /text-\[#ffc233\]/);
@@ -376,7 +372,7 @@ describe('Phase 4 public website', () => {
 
     test('renders every section in the required order with the required copy', async () => {
       const page = await visit('/');
-      const order = ['header', '[data-hero="home"]', 'section[aria-label]', '#services', '#why-hashimi', '#how-it-works', '#industries', '#cross-border', '#service-areas', '#statistics', '#faq-preview', '#cta', 'footer'];
+      const order = ['header', '[data-hero="home"]', 'section[aria-label]', '#services', '#why-hashimi', '#how-it-works', '#industries', '#cross-border', '#service-areas', '#statistics', '#cta', '#network', '#get-a-quote', '#faq-preview', 'footer'];
       const positions = order.map((selector) => {
         const el = document.querySelector(selector);
         assert.ok(el, `${selector} exists`);
@@ -387,7 +383,7 @@ describe('Phase 4 public website', () => {
         assert.ok(text().includes(copy), `homepage contains "${copy}"`);
       }
       assert.equal(document.querySelectorAll('#services li article, #services > div ul > li').length >= 8, true);
-      assert.equal(document.querySelectorAll('#industries article').length, 8);
+      assert.equal(document.querySelectorAll('#industries ul > li').length, 8);
       assert.ok(!document.getElementById('testimonials'), 'no testimonials are shown when none are published');
       await page.unmount();
     });
@@ -882,7 +878,8 @@ describe('Phase 4 public website', () => {
         const pathname = href.split(/[?#]/)[0];
         const matches = RR.matchRoutes(appRoutes, pathname);
         assert.ok(matches && matches.at(-1).route.path !== '*', `${href} resolves to a real route`);
-        assert.ok(!/^\/(customer|admin)(\/|$)/.test(pathname) && !/^\/carrier(\/|$)/.test(pathname), `${href} does not link into a portal`);
+        // The navbar's Sign In menu may open the Super Admin sign-in page; no public page links to a dashboard.
+        assert.ok(pathname === '/admin/login' || (!/^\/(customer|admin)(\/|$)/.test(pathname) && !/^\/carrier(\/|$)/.test(pathname)), `${href} does not link into a portal`);
       }
       assert.ok(seen.has('/login'), 'public site keeps a route into sign-in');
     });

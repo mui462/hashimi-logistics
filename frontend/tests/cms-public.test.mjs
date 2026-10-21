@@ -67,7 +67,9 @@ describe('Phase 9 public website and the CMS', () => {
       assert.equal(h.link('Talk to us').getAttribute('href'), '/contact');
       assert.equal(h.link('External').getAttribute('href'), 'https://example.org/x');
       const ids = sectionIds();
-      assert.ok(ids.indexOf('cta') < ids.indexOf('faq-preview') && ids.indexOf('faq-preview') < ids.indexOf('services'), `order is ${ids.join(',')}`);
+      // The saved order moves the call to action to the top; the quote form and then the FAQ always close the page, whatever order was saved.
+      assert.ok(ids.indexOf('cta') < ids.indexOf('services'), `order is ${ids.join(',')}`);
+      assert.deepEqual(ids.slice(-3), ['network', 'get-a-quote', 'faq-preview'], `order is ${ids.join(',')}`);
       await view.unmount();
     });
 
@@ -468,7 +470,8 @@ describe('Phase 9 public website and the CMS', () => {
       const industries = document.getElementById('industries');
       assert.match(industries.className, /\bbg-ink-900\b/);
       assert.match(industries.className, /\bpy-10\b/, 'compact spacing');
-      assert.ok(industries.querySelectorAll('article.glass-card').length > 0, 'glass cards');
+      // The homepage shows industries as picture cards, which keep their own look; the glass card style applies to the plain card grid.
+      assert.equal(industries.querySelectorAll('ul > li').length, 8, 'the eight industry cards are shown');
       assert.ok([...industries.querySelectorAll('.reveal')].every((el) => el.dataset.variant === 'fade'));
 
       const faq = document.getElementById('faq-preview');

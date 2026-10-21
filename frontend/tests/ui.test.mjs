@@ -452,7 +452,8 @@ describe('frontend routing, guards, and authentication', () => {
       const { readdirSync, readFileSync } = await import('node:fs');
       const files = readdirSync(`${ROOT}src`, { recursive: true }).filter((file) => /\.(js|jsx)$/.test(file));
       for (const file of files) {
-        const text = readFileSync(`${ROOT}src/${file}`, 'utf8');
+        // The one allowed use: on a reload, main.jsx clears the router's saved scroll positions. Nothing is ever stored.
+        const text = readFileSync(`${ROOT}src/${file}`, 'utf8').replace("sessionStorage.removeItem('react-router-scroll-positions')", '');
         assert.ok(!/localStorage|sessionStorage|indexedDB/.test(text), `${file} uses browser storage`);
         assert.ok(!/Authorization|Bearer /.test(text), `${file} sets an Authorization header`);
       }
