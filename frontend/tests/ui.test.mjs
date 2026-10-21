@@ -228,6 +228,37 @@ describe('frontend routing, guards, and authentication', () => {
       });
     }
 
+    test('a signed-in account opening the sign-in page of another account type is asked, not sent to its own dashboard', async () => {
+      for (const [who, role, from, wanted] of [
+        ['Super Admin', 'super_admin', '/login?portal=customer', 'Customer sign in'],
+        ['Super Admin', 'super_admin', '/login?portal=carrier', 'Carrier sign in'],
+        ['Super Admin', 'super_admin', '/register?type=carrier', 'Carrier registration'],
+        ['Customer', 'customer', '/login?portal=carrier', 'Carrier sign in'],
+        ['Carrier', 'carrier', '/admin/login', 'Super Admin sign in'],
+      ]) {
+        const page = await visit(from, role);
+        assert.equal(page.h1(), 'You are already signed in', `${who} on ${from}`);
+        assert.equal(page.path(), '/login' === from.split('?')[0] ? '/login' : from.split('?')[0], 'the address is not replaced');
+        assert.match(document.body.textContent, new RegExp(`Sign out and continue to ${wanted}`));
+        assert.match(document.body.textContent, new RegExp(`Stay signed in as ${who}`));
+        await page.unmount();
+      }
+    });
+
+    test('"Sign out and continue" ends the session and shows the sign-in form that was asked for; "Stay signed in" goes to the dashboard', async () => {
+      let page = await visit('/login?portal=customer', 'super_admin');
+      await clickButton('Sign out and continue to Customer sign in');
+      assert.equal(session, null);
+      assert.ok(calls.some((call) => call.key === 'POST /auth/logout'));
+      assert.equal(page.path(), '/login');
+      assert.equal(page.h1(), 'Customer sign in');
+      await page.unmount();
+      page = await visit('/login?portal=carrier', 'super_admin');
+      const stay = [...document.querySelectorAll('a')].find((link) => link.textContent.includes('Stay signed in as Super Admin'));
+      assert.equal(stay.getAttribute('href'), '/admin');
+      await page.unmount();
+    });
+
     test('public pages are never gated, signed in or not', async () => {
       for (const role of [null, 'customer', 'carrier', 'super_admin']) {
         for (const path of ['/', '/services', '/contact', '/track-shipment']) {
