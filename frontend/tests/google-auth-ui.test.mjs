@@ -101,9 +101,15 @@ describe('Customer and carrier authentication pages', () => {
     const quiet = { 'GET /customer/notifications': () => ({ data: { items: [], pagination: { page: 1, limit: 20, total: 0, totalPages: 1 }, unreadCount: 0 } }) };
     for (const [as, home] of [['customer', '/customer'], ['carrier', '/carrier'], ['super_admin', '/admin']]) {
       for (const portal of ['customer', 'carrier']) {
-        test(`${as} opening /login?portal=${portal} is sent to their own home, ${home}`, async () => {
+        const sameAccount = as === portal;
+        test(sameAccount ? `${as} opening /login?portal=${portal} is sent to their own home, ${home}` : `${as} opening /login?portal=${portal} is asked whether to sign out, not sent to ${home}`, async () => {
           const view = await h.visit(`/login?portal=${portal}`, { as, routes: { ...googleConfig(false), ...quiet }, wait: false });
-          await arriveUnder(view, home);
+          if (sameAccount) await arriveUnder(view, home);
+          else {
+            for (let attempt = 0; attempt < 40 && !document.querySelector('h1'); attempt += 1) await new Promise((resolve) => setTimeout(resolve, 25));
+            assert.equal(document.querySelector('h1')?.textContent, 'You are already signed in');
+            assert.ok(!view.path().startsWith(home), 'the dashboard of the signed-in account is not opened');
+          }
           await view.unmount();
         });
       }
