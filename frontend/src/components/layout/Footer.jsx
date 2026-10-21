@@ -6,10 +6,9 @@ import { PATHS } from '../../config/paths';
 import { useSiteContent } from '../../context/SiteContentContext';
 import Container from '../common/Container';
 import Logo from '../common/Logo';
+import SocialIcon, { SOCIAL_LABELS } from '../common/SocialIcon';
 
 const linkClasses = 'inline-flex min-h-11 items-center text-base text-steel-200 underline-offset-4 hover:text-white hover:underline';
-
-const SOCIAL_LABELS = { linkedin: 'LinkedIn', facebook: 'Facebook', instagram: 'Instagram', x: 'X', youtube: 'YouTube', tiktok: 'TikTok' };
 
 export default function Footer({
   company: companyProp,
@@ -24,7 +23,7 @@ export default function Footer({
   const social = socialProp ?? site?.social ?? socialLinks;
   const hours = Array.isArray(contact.businessHours) ? contact.businessHours : contact.businessHours ? [contact.businessHours] : [];
   const { phone, email, address, mcNumber, dotNumber } = contact;
-  const socials = Object.entries(social).filter(([, url]) => url);
+  const socials = Object.entries(social).filter(([key, url]) => url && SOCIAL_LABELS[key]);
 
   return (
     <footer data-surface="dark" className="bg-ink-950 text-white">
@@ -36,10 +35,11 @@ export default function Footer({
             <p className="text-lg font-semibold">{company.tagline}</p>
             <p className="max-w-sm text-base text-steel-200">{site?.footerText || company.supportingStatement}</p>
             {socials.length > 0 && (
-              <ul className="flex flex-wrap gap-x-5" aria-label="Social media">
+              <ul className="flex flex-wrap gap-x-6 gap-y-1" aria-label="Social media">
                 {socials.map(([key, url]) => (
                   <li key={key}>
-                    <a href={url} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className={`${linkClasses} gap-3`}>
+                      <SocialIcon platform={key} />
                       {SOCIAL_LABELS[key]}
                     </a>
                   </li>
