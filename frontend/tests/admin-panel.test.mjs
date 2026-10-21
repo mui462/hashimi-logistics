@@ -1368,20 +1368,21 @@ describe('Phase 8 Super Admin panel', () => {
       assert.equal(h1(), 'Navbar appearance');
       assert.deepEqual(previews().map((figure) => figure.querySelector('figcaption').textContent), ['1. Over the hero (transparent glass)', '2. After scrolling (solid)']);
       for (const heading of ['Preview', 'Hero state', 'Scrolled state', 'Navigation links', 'Action buttons']) assert.ok([...document.querySelectorAll('main h2')].some((h) => h.textContent === heading), heading);
-      assert.equal(previewVar(0, '--nav-bg'), 'rgba(17, 17, 17, 0.35)');
-      assert.equal(previewVar(1, '--nav-bg'), '#111111');
+      assert.equal(previewVar(0, '--nav-bg'), '#22252A', 'transparent glass is off by default, so the hero preview is solid too');
+      assert.equal(previewVar(1, '--nav-bg'), '#22252A');
+      assert.match(text(), /Transparent glass is off, so the navbar is solid over the hero too/);
       assert.ok(button('Save changes').disabled, 'nothing to save yet');
       assert.ok(previews()[0].querySelector('[inert]'), 'the preview cannot be clicked or focused');
 
-      await setValue(byLabel('Glass opacity'), '60');
-      assert.equal(previewVar(0, '--nav-bg'), 'rgba(17, 17, 17, 0.6)');
-      assert.match(text(), /60%/);
+      await setValue(document.getElementById('navbar-scrolled-backgroundColor-hex'), '#303030');
+      assert.equal(previewVar(0, '--nav-bg'), '#303030');
+      assert.equal(previewVar(1, '--nav-bg'), '#303030');
       assert.match(text(), /You have unsaved changes/);
       assert.ok(!button('Save changes').disabled);
       assert.equal(called('PUT /admin/cms/settings/navbar-appearance').length, 0, 'the preview never saves');
 
       await act(async () => button('Revert unsaved changes').click());
-      assert.equal(previewVar(0, '--nav-bg'), 'rgba(17, 17, 17, 0.35)');
+      assert.equal(previewVar(0, '--nav-bg'), '#22252A');
       assert.ok(button('Save changes').disabled);
       await view.unmount();
     });
@@ -1431,12 +1432,12 @@ describe('Phase 8 Super Admin panel', () => {
 
     test('Reset to defaults asks first, then restores the defaults on the server', async () => {
       const saved = JSON.parse(JSON.stringify(DEFAULTS));
-      saved.hero.backgroundOpacity = 70;
+      saved.scrolled.backgroundColor = '#303030';
       const view = await visit('/admin/cms/navbar', 'super_admin', {
         'GET /admin/cms/settings/navbar-appearance': () => appearanceRoute(saved),
         'POST /admin/cms/settings/navbar-appearance/reset': () => appearanceRoute(DEFAULTS),
       });
-      assert.equal(previewVar(0, '--nav-bg'), 'rgba(17, 17, 17, 0.7)');
+      assert.equal(previewVar(0, '--nav-bg'), '#303030');
       await act(async () => button('Reset to defaults').click());
       assert.equal(called('POST /admin/cms/settings/navbar-appearance/reset').length, 0, 'nothing happens before confirming');
       const dialog = document.querySelector('[role="dialog"], [role="alertdialog"], dialog');

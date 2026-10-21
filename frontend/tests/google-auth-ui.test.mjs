@@ -49,14 +49,14 @@ describe('Customer and carrier authentication pages', () => {
   beforeEach(() => { delete window.google; });
 
   describe('the two portals', () => {
-    for (const [portal, title, registerHref, dashboard, role] of [
-      ['carrier', 'Carrier sign in', '/register?type=carrier', '/carrier', 'carrier'],
-      ['customer', 'Customer sign in', '/register?type=customer', '/customer', 'customer'],
+    for (const [portal, title, registerHref, dashboard, role, registerLink] of [
+      ['carrier', 'Carrier sign in', '/register?type=carrier', '/carrier', 'carrier', 'Register as a Carrier'],
+      ['customer', 'Customer sign in', '/register?type=customer', '/customer', 'customer', 'Register as a Customer'],
     ]) {
       test(`${portal}: its own heading and registration link, password sign-in sends the portal, and the account's role picks the dashboard`, async () => {
         const view = await visit(`/login?portal=${portal}`, { routes: { 'POST /auth/login': signedIn(role) } });
         assert.equal(h.h1(), title);
-        assert.equal(h.link(portal === 'carrier' ? 'Register as a Carrier' : 'Create a Customer Account').getAttribute('href'), registerHref);
+        assert.equal(h.link(registerLink).getAttribute('href'), registerHref);
         await submitLogin();
         assert.deepEqual(h.called('POST /auth/login')[0].body, { email: 'person@example.com', password: 'a-long-enough-pass-1', portal });
         await arrive(view, dashboard);
@@ -197,13 +197,19 @@ describe('Customer and carrier authentication pages', () => {
   });
 
   describe('registration pages', () => {
-    test('the type in the address only preselects customer or carrier; anything else falls back to customer and no privileged type is offered', async () => {
-      const expectations = [['carrier', 'carrier', 'Register as a Carrier'], ['customer', 'customer', 'Create a Customer Account'], ['super_admin', 'customer', 'Create your account'], ['', 'customer', 'Create your account']];
-      for (const [type, selected, title] of expectations) {
-        const view = await visit(`/register${type ? `?type=${type}` : ''}`);
+    test('a customer or carrier type in the address locks the form to that type; anything else shows the chooser with customer preselected and no privileged type', async () => {
+      for (const [type, title, locked] of [['carrier', 'Register as a Carrier', 'Carrier account: I haul freight'], ['customer', 'Create a Customer Account', 'Customer account: I ship freight']]) {
+        const view = await visit(`/register?type=${type}`);
         assert.equal(h.h1(), title, type);
+        assert.ok(!document.getElementById('accountType') && ![...document.querySelectorAll('label')].some((label) => label.textContent.startsWith('Account type')), `${type}: no chooser`);
+        assert.match(document.body.textContent, new RegExp(locked), type);
+        await view.unmount();
+      }
+      for (const type of ['super_admin', '']) {
+        const view = await visit(`/register${type ? `?type=${type}` : ''}`);
+        assert.equal(h.h1(), 'Create your account', type);
         const select = h.labelled('Account type');
-        assert.equal(select.value, selected, type);
+        assert.equal(select.value, 'customer', type);
         assert.deepEqual([...select.options].map((option) => option.value), ['customer', 'carrier']);
         await view.unmount();
       }
