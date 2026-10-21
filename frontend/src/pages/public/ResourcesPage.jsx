@@ -6,6 +6,8 @@ import ErrorState from '../../components/common/ErrorState';
 import LoadingState from '../../components/common/LoadingState';
 import { FIELD_CLASSES } from '../../components/forms/fieldStyles';
 import ArticleCard from '../../components/common/ArticleCard';
+import CmsPageContent from '../../components/sections/CmsPageContent';
+import { useCmsPage } from '../../hooks/useCmsPage';
 import Seo from '../../components/seo/Seo';
 import CTASection from '../../components/sections/CTASection';
 import HeroSection from '../../components/sections/HeroSection';
@@ -28,6 +30,7 @@ function Pagination({ page, totalPages, onChange }) {
 }
 
 export default function ResourcesPage() {
+  const { page: cms } = useCmsPage('resources');
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -50,8 +53,9 @@ export default function ResourcesPage() {
 
   return (
     <>
-      <Seo title="Resources" description={`Freight, transportation and cross-border articles and updates from ${brand.name}`} path={PATHS.resources} />
-      <HeroSection eyebrow="Resources" title="Freight Resources" description="Articles and updates on freight, transportation and cross-border shipping." scene="warehouse" />
+      <Seo title="Resources" description={`Freight, transportation and cross-border articles and updates from ${brand.name}`} path={PATHS.resources} seo={cms?.seo} />
+      <HeroSection eyebrow="Resources" title="Freight Resources" description="Articles and updates on freight, transportation and cross-border shipping." scene="warehouse" cms={cms} />
+      <CmsPageContent page={cms} />
       <SectionShell id="articles" labelledBy="articles-heading">
         <h2 id="articles-heading" className="sr-only">Articles</h2>
         <div role="search" className="mb-8 space-y-5">

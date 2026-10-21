@@ -373,6 +373,25 @@ describe('website CMS', { skip: skipReason }, () => {
       assert.equal(data.stats[0].value, '12');
     });
 
+    test('the network map and quote form blocks are saved, served publicly, and take no appearance or unknown fields', async () => {
+      const data = ok(await cms('/homepage', 'PATCH', {
+        networkSection: { title: 'Our network', subtitle: 'Why us', description: 'Plain text.', isActive: true, button: { label: 'Read more', url: '/contact' }, items: [{ title: 'Experience', description: 'Plain text.', icon: 'shield', displayOrder: 0, isActive: true }, { title: 'Hidden pillar', isActive: false, displayOrder: 1 }] },
+        quoteSection: { title: 'Quote us', isActive: false },
+      }));
+      assert.equal(data.networkSection.items.length, 2);
+      const open = ok(await pub('/homepage'));
+      assert.equal(open.network.enabled, true);
+      assert.equal(open.network.title, 'Our network');
+      assert.deepEqual(open.network.button, { label: 'Read more', url: '/contact' });
+      assert.deepEqual(open.network.items.map((i) => i.title), ['Experience']);
+      assert.equal(open.quote.enabled, false);
+      assert.ok(!('appearance' in open.network) && !('appearance' in open.quote));
+      assert.ok(!open.sectionOrder.includes('network') && !open.sectionOrder.includes('quote'));
+      refuse(await cms('/homepage', 'PATCH', { networkSection: { appearance: { spacing: 'compact' } } }), 422);
+      refuse(await cms('/homepage', 'PATCH', { quoteSection: { title: 'x', role: 'admin' } }), 422);
+      refuse(await cms('/homepage', 'PATCH', { networkSection: { title: '<script>alert(1)</script>' } }), 422);
+    });
+
     test('the public homepage is one grouped, allow-listed response', async () => {
       const data = ok(await pub('/homepage'));
       assert.equal(data.configured, true);
@@ -418,6 +437,12 @@ describe('website CMS', { skip: skipReason }, () => {
       assert.equal(page.status, 'draft');
       refuse(await cms('/pages', 'POST', { title: 'About again', pageKey: 'about' }), 409, 'PAGE_KEY_TAKEN');
       refuse(await cms('/pages', 'POST', { title: 'X', pageKey: 'contact', slug: 'something-else' }), 422);
+    });
+
+    test('the carrier, quote, tracking and resources pages are offered as built-in pages', async () => {
+      // Only listed here, not created: later tests count the pages in this collection.
+      const available = ok(await cms('/pages')).availableSystemPages;
+      for (const key of ['become-a-carrier', 'carrier-resources', 'request-quote', 'track-shipment', 'resources']) assert.ok(available.includes(key), key);
     });
 
     test('a system page cannot change its slug or be archived', async () => {

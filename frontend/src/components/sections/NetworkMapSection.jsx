@@ -81,8 +81,21 @@ function NetworkMap() {
   );
 }
 
-export default function NetworkMapSection({ id = 'network', headingAs }) {
+const DEFAULT_HEADING = { eyebrow: 'Our Network', title: 'Experience. Capacity. Flexibility.', description: 'Hashimi Logistics coordinates freight across the United States and between the U.S., Canada and Mexico, matching each shipment with suitable carriers and equipment.' };
+const DEFAULT_ACTION = { label: 'Learn more', to: PATHS.about };
+const LINK_CLASS = 'group/cta inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-signal-400 bg-black/45 px-5 text-sm font-bold tracking-wide text-white backdrop-blur-sm transition-[background-color,color,transform] duration-300 ease-out hover:bg-signal-400 hover:text-ink-950 focus-visible:bg-signal-400 focus-visible:text-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal-400 active:translate-y-px motion-reduce:transition-none';
+
+// Text, the three pillars and the button come from the CMS (Homepage -> Network block); empty values keep the built-in text.
+export default function NetworkMapSection({ id = 'network', headingAs, eyebrow, title, description, pillars, action }) {
   const headingId = `${id}-heading`;
+  const items = pillars?.length ? pillars : PILLARS;
+  const link = action ?? DEFAULT_ACTION;
+  const content = (
+    <>
+      {link.label}
+      <ArrowRight className="size-4 text-signal-400 transition-transform duration-300 group-hover/cta:translate-x-1 group-hover/cta:text-ink-950 group-focus-visible/cta:translate-x-1 group-focus-visible/cta:text-ink-950 motion-reduce:transition-none" aria-hidden="true" />
+    </>
+  );
   return (
     <SectionShell id={id} tone="darker" labelledBy={headingId}>
       <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
@@ -90,11 +103,11 @@ export default function NetworkMapSection({ id = 'network', headingAs }) {
           <NetworkMap />
         </Reveal>
         <div>
-          <SectionHeading id={headingId} eyebrow="Our Network" title="Experience. Capacity. Flexibility." description="Hashimi Logistics coordinates freight across the United States and between the U.S., Canada and Mexico, matching each shipment with suitable carriers and equipment." dark as={headingAs} className="mb-8 sm:mb-8" />
+          <SectionHeading id={headingId} eyebrow={eyebrow || DEFAULT_HEADING.eyebrow} title={title || DEFAULT_HEADING.title} description={description || DEFAULT_HEADING.description} dark as={headingAs} className="mb-8 sm:mb-8" />
           <ul className="mb-8 grid gap-5">
-            {PILLARS.map((p) => (
+            {items.map((p) => (
               <li key={p.title} className="flex gap-3">
-                <IconByName name={p.icon} className="mt-1 size-6 shrink-0 text-signal-400" />
+                <IconByName name={p.icon || 'shield'} className="mt-1 size-6 shrink-0 text-signal-400" />
                 <div>
                   <h3 className="text-lg font-bold">{p.title}</h3>
                   <p className="text-base text-steel-200">{p.text}</p>
@@ -102,13 +115,7 @@ export default function NetworkMapSection({ id = 'network', headingAs }) {
               </li>
             ))}
           </ul>
-          <Link
-            to={PATHS.about}
-            className="group/cta inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-signal-400 bg-black/45 px-5 text-sm font-bold tracking-wide text-white backdrop-blur-sm transition-[background-color,color,transform] duration-300 ease-out hover:bg-signal-400 hover:text-ink-950 focus-visible:bg-signal-400 focus-visible:text-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal-400 active:translate-y-px motion-reduce:transition-none"
-          >
-            Learn more
-            <ArrowRight className="size-4 text-signal-400 transition-transform duration-300 group-hover/cta:translate-x-1 group-hover/cta:text-ink-950 group-focus-visible/cta:translate-x-1 group-focus-visible/cta:text-ink-950 motion-reduce:transition-none" aria-hidden="true" />
-          </Link>
+          {link.href ? <a href={link.href} className={LINK_CLASS}>{content}</a> : <Link to={link.to} className={LINK_CLASS}>{content}</Link>}
         </div>
       </div>
     </SectionShell>

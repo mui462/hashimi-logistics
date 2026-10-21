@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import IconByName from '../../components/common/IconByName';
+import CmsPageContent from '../../components/sections/CmsPageContent';
+import { useCmsPage } from '../../hooks/useCmsPage';
 import Seo from '../../components/seo/Seo';
 import CTASection from '../../components/sections/CTASection';
 import HeroSection from '../../components/sections/HeroSection';
@@ -9,10 +11,12 @@ import { carrierResourceCards } from '../../content/pages';
 import { brand } from '../../config/brand';
 
 export default function CarrierResourcesPage() {
+  const { page: cms } = useCmsPage('carrier-resources');
   return (
     <>
-      <Seo title="Carrier Resources" description={`Onboarding, documents, POD instructions and support for carriers working with ${brand.name}`} path={PATHS.carrierResources} />
-      <HeroSection eyebrow="Carriers" title="Carrier Resources" description="What carriers need to get started and stay informed." scene="dryvan" />
+      <Seo title="Carrier Resources" description={`Onboarding, documents, POD instructions and support for carriers working with ${brand.name}`} path={PATHS.carrierResources} seo={cms?.seo} />
+      <HeroSection eyebrow="Carriers" title="Carrier Resources" description="What carriers need to get started and stay informed." scene="dryvan" cms={cms} />
+      <CmsPageContent page={cms} />
       <SectionShell id="resources-cards" labelledBy="cr-heading">
         <h2 id="cr-heading" className="sr-only">Carrier resources</h2>
         <ul className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">

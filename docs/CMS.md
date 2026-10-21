@@ -37,7 +37,7 @@ Admin UI (React)                          Backend (Express)                     
 | --- | --- |
 | `/admin/cms` | Overview: counts and what is live |
 | `/admin/cms/homepage` | Hero, section order and visibility, section content |
-| `/admin/cms/pages` , `/new`, `/:id` | System pages (About, Contact, legal …) and extra pages |
+| `/admin/cms/pages` , `/new`, `/:id` | System pages (About, Contact, legal, Become a Carrier, Carrier Resources, Request a Quote, Track Shipment, Resources …) and extra pages |
 | `/admin/cms/services` , `/new`, `/:id` | Services |
 | `/admin/cms/industries` , `/new`, `/:id` | Industries |
 | `/admin/cms/service-areas` , `/new`, `/:id` | Service areas (US, CA, MX only) |
@@ -238,3 +238,16 @@ mirrored in `frontend/src/config/sectionAppearance.js`). Presets only, and only 
 
 "Built-in" keeps the section's current look. A section is saved as a whole, so the editor always sends its appearance with its
 content. Anything outside a section's list is refused with 422.
+
+## Pages and homepage blocks that were not editable before
+
+* **Built-in pages.** Become a Carrier, Carrier Resources, Request a Quote, Track Shipment and Resources are now system pages
+  (`PAGE_KEYS`: `become-a-carrier`, `carrier-resources`, `request-quote`, `track-shipment`, `resources`). In
+  **Website CMS -> Pages** they appear under "Built-in pages you have not customised". A published version replaces the
+  banner heading, subtitle and picture, adds its summary, text, sections and button after the banner, and sets the search
+  text. Unpublished (or draft) pages keep the built-in page exactly as it was; the forms, tracking lookup and article list are unchanged.
+* **Homepage blocks.** The network map block ("Our Network", the three pillars and the button) and the quote form block (heading
+  above the quote form) are stored on the `Homepage` record as `networkSection` and `quoteSection` (public payload keys
+  `network` and `quote`). They have a heading, a small line above it, an introduction and an on/off switch; the network block also
+  has up to six pillars and a button. They keep their fixed place on the page (map, then quote form, then the FAQ), so they are not part of
+  `sectionOrder` and have no appearance presets. Empty fields keep the built-in text.

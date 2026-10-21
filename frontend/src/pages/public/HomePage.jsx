@@ -60,8 +60,8 @@ export default function HomePage() {
           </SectionAppearanceContext.Provider>
         ) : null
       )}
-      <NetworkMapSection />
-      <HomeQuoteSection />
+      {s.network.enabled && <NetworkMapSection eyebrow={s.network.eyebrow} title={s.network.title} description={s.network.description} pillars={s.network.pillars} action={s.network.action} />}
+      {s.quote.enabled && <HomeQuoteSection eyebrow={s.quote.eyebrow} title={s.quote.title} description={s.quote.description} />}
       {showFaq && (
         <SectionAppearanceContext.Provider value={home.appearance.faq}>{render.faq()}</SectionAppearanceContext.Provider>
       )}

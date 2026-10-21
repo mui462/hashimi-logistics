@@ -83,6 +83,8 @@ export const homepageSchema = z.object({
       serviceAreas: section({ cardImages: list(z.object({ slug: plain(80, { min: 1 }), image: mediaRef }).strict(), 30).optional(), appearance: appearanceFor('serviceAreas') }).optional(),
       statsSection: section({ appearance: appearanceFor('statsSection') }).optional(),
       stats: list(z.object({ label: required(80), value: required(40), description: plain(200).optional(), isActive: z.boolean().optional(), displayOrder: displayOrder.optional() }).strict(), 12).optional(),
+      networkSection: section({ items: list(contentItem, 6).optional() }).optional(),
+      quoteSection: section().optional(),
       testimonials: section({ appearance: appearanceFor('testimonials') }).optional(),
       faq: section({ appearance: appearanceFor('faq') }).optional(),
       finalCTA: section({ primaryButton: nullable(button).optional(), secondaryButton: nullable(button).optional(), appearance: appearanceFor('finalCTA') }).optional(),

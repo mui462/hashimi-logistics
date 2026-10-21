@@ -1,4 +1,6 @@
 import CarrierApplicationForm from '../../components/forms/CarrierApplicationForm';
+import CmsPageContent from '../../components/sections/CmsPageContent';
+import { useCmsPage } from '../../hooks/useCmsPage';
 import Seo from '../../components/seo/Seo';
 import BulletSection from '../../components/sections/BulletSection';
 import CTASection from '../../components/sections/CTASection';
@@ -12,10 +14,12 @@ import { carrierRequirements, carrierSections } from '../../content/pages';
 import { brand } from '../../config/brand';
 
 export default function BecomeCarrierPage() {
+  const { page: cms } = useCmsPage('become-a-carrier');
   return (
     <>
-      <Seo title="Become a Carrier" description={`Apply to haul freight with ${brand.name}`} path={PATHS.becomeCarrier} />
-      <HeroSection eyebrow="Carriers" title="Become a Carrier" description={`Apply to haul domestic and cross-border freight with ${brand.shortName}.`} scene="flatbed" actions={[{ label: 'Start Application', href: '#apply' }]} />
+      <Seo title="Become a Carrier" description={`Apply to haul freight with ${brand.name}`} path={PATHS.becomeCarrier} seo={cms?.seo} />
+      <HeroSection eyebrow="Carriers" title="Become a Carrier" description={`Apply to haul domestic and cross-border freight with ${brand.shortName}.`} scene="flatbed" actions={[{ label: 'Start Application', href: '#apply' }]} cms={cms} />
+      <CmsPageContent page={cms} />
       <FeatureGrid id="why-partner" eyebrow="Why partner" title="Why Partner With Us" items={carrierSections.slice(0, 3)} tone="default" />
       <FeatureGrid id="carrier-benefits" eyebrow="Benefits" title="Carrier Benefits" items={carrierSections.slice(3)} tone="dark" />
       <BulletSection id="requirements" eyebrow="Requirements" title="Requirements" description="Our team confirms exact requirements during onboarding." items={carrierRequirements} />
