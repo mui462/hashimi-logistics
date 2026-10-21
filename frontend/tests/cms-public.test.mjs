@@ -168,6 +168,8 @@ describe('Phase 9 public website and the CMS', () => {
       assert.match(footer.textContent, /Footer words from the CMS\./);
       assert.match(footer.textContent, /CMS copyright line\./);
       assert.equal(footer.querySelector('a[href="https://www.linkedin.com/company/example"]').textContent, 'LinkedIn');
+      assert.ok(footer.querySelector('a[href="https://www.linkedin.com/company/example"] svg'), 'the social link carries its platform logo');
+      assert.equal(footer.querySelector('a[href="https://www.linkedin.com/company/example"] [aria-hidden="true"]').getAttribute('aria-hidden'), 'true');
       assert.ok(document.querySelector('header').textContent.includes('Get pricing'));
       await view.unmount();
     });
