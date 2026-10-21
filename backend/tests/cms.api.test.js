@@ -445,6 +445,13 @@ describe('website CMS', { skip: skipReason }, () => {
       for (const key of ['become-a-carrier', 'carrier-resources', 'request-quote', 'track-shipment', 'resources']) assert.ok(available.includes(key), key);
     });
 
+    test('a system page keeps an introduction picture, and removing it sends null', async () => {
+      const updated = ok(await cms(`/pages/${ID.about}`, 'PATCH', { introImage: { url: 'https://cdn.example.com/intro.jpg', altText: 'Intro' } }));
+      assert.equal(updated.introImage.url, 'https://cdn.example.com/intro.jpg');
+      const cleared = ok(await cms(`/pages/${ID.about}`, 'PATCH', { introImage: null }));
+      assert.equal(cleared.introImage, null);
+    });
+
     test('a system page cannot change its slug or be archived', async () => {
       refuse(await cms(`/pages/${ID.about}`, 'PATCH', { slug: 'about-us' }), 409, 'SYSTEM_PAGE_LOCKED');
       refuse(await cms(`/pages/${ID.about}`, 'PATCH', { pageKey: 'contact' }), 422);

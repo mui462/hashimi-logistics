@@ -26,7 +26,7 @@ export default function ForCarriersPage() {
           'Apply online and our team will review your application. We confirm the exact requirements during onboarding.',
         ]}
         highlights={['Domestic and cross-border lanes', 'Online application and documents', 'Clear pickup and delivery details', 'A coordination team that supports carriers']}
-        media={{ scene: 'flatbed', alt: '' }}
+        media={{ image: cms?.introImage, scene: 'flatbed', alt: '' }}
       />
       <FeatureGrid id="carrier-benefits" eyebrow="Carriers" title="Working With Us" items={carrierSections} tone="muted" />
       <BulletSection id="carrier-requirements" eyebrow="Requirements" title="What Carriers Need to Apply" description="Our team confirms exact requirements during onboarding." items={carrierRequirements} />

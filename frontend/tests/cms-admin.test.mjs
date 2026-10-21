@@ -257,6 +257,57 @@ describe('Phase 9 Website CMS admin', () => {
       await view.unmount();
     });
 
+    test('a picture can be added by its link from inside the picker and is chosen straight away', async () => {
+      const added = media({ id: 'e'.repeat(24), fileName: 'dock.jpg', url: 'https://cdn.example.com/new/dock.jpg', altText: 'New dock' });
+      const view = await visit('/admin/cms/services/new', { routes: { 'GET /admin/cms/media': () => ({ data: page([], { folders: [], storage: {} }) }), 'POST /admin/cms/media/external': () => ({ status: 201, data: added }) } });
+      await h.click(h.button('Choose from library'));
+      assert.match(h.dialog().textContent, /Add a new picture/);
+      assert.match(h.dialog().textContent, /File uploads are not set up/);
+      await h.fill({ 'Picture web address': 'http://insecure.example.com/a.jpg' });
+      await h.submit(h.form('Add a picture by link'));
+      assert.match(h.dialog().textContent, /starting with https/);
+      assert.equal(h.called('POST /admin/cms/media/external').length, 0);
+      await h.fill({ 'Picture web address': 'https://cdn.example.com/new/dock.jpg', 'Alt text': 'New dock' });
+      await h.submit(h.form('Add a picture by link'));
+      const sent = h.called('POST /admin/cms/media/external')[0].body;
+      assert.deepEqual({ url: sent.url, fileName: sent.fileName, type: sent.type, altText: sent.altText }, { url: 'https://cdn.example.com/new/dock.jpg', fileName: 'dock.jpg', type: 'image', altText: 'New dock' });
+      assert.equal(h.dialog(), null);
+      assert.ok(document.querySelector('img[alt="Preview of Card image"]'));
+      await view.unmount();
+    });
+
+    test('Fill pictures from library hands out library pictures to empty spots only, creates and publishes missing menu pages, and keeps existing pictures', async () => {
+      const images = [1, 2, 3, 4].map((n) => media({ id: String(n).repeat(24), fileName: `p${n}.jpg`, url: `https://cdn.example.com/p${n}.jpg`, altText: null }));
+      const about = pageRecord({ heroImage: { url: 'https://cdn.example.com/own.jpg', altText: 'Own', mediaId: null }, status: 'published' });
+      const services = pageRecord({ id: 'e'.repeat(24), title: 'Services', slug: 'services', pageKey: 'services', status: 'draft' });
+      const created = pageRecord({ id: '9'.repeat(24), status: 'draft' });
+      const view = await visit('/admin/cms/pages', { routes: {
+        'GET /admin/cms/media': () => ({ data: page(images, { folders: [], storage: {} }) }),
+        'GET /admin/cms/pages': () => ({ data: page([{ ...about, excerpt: null }, { ...services, excerpt: null }], { availableSystemPages: [] }) }),
+        [`GET /admin/cms/pages/${about.id}`]: () => ({ data: about }),
+        [`GET /admin/cms/pages/${services.id}`]: () => ({ data: services }),
+        [`PATCH /admin/cms/pages/${services.id}`]: () => ({ data: services }),
+        'POST /admin/cms/pages': () => ({ status: 201, data: created }),
+        [`POST /admin/cms/pages/${created.id}/publish`]: () => ({ data: { ...created, status: 'published' } }),
+      } });
+      await h.click(h.button('Fill pictures from library'));
+      assert.match(h.dialog().textContent, /Page will be created/);
+      assert.doesNotMatch(h.dialog().textContent, /About Us/, 'a page that needs nothing is not listed');
+      await h.click(h.button('Fill pictures'));
+      const saved = h.called(`PATCH /admin/cms/pages/${services.id}`);
+      assert.equal(saved.length, 1);
+      assert.equal(saved[0].body.heroImage.url, 'https://cdn.example.com/p1.jpg');
+      assert.equal(saved[0].body.introImage.url, 'https://cdn.example.com/p2.jpg');
+      assert.equal(saved[0].body.heroImage.altText, 'Services', 'alt text falls back to the page title');
+      assert.equal(h.called(`PATCH /admin/cms/pages/${about.id}`).length, 0, 'a page that already has its picture is untouched');
+      assert.ok(h.called('POST /admin/cms/pages').length >= 8, 'missing menu pages are created');
+      assert.ok(h.called('POST /admin/cms/pages').every((call) => call.body.pageKey && call.body.heroImage.url && !('heroHeading' in call.body)));
+      assert.ok(h.called(`POST /admin/cms/pages/${created.id}/publish`).length >= 8, 'created pages are published');
+      assert.equal(h.called(`POST /admin/cms/pages/${services.id}/publish`).length, 0, 'an existing draft is never published');
+      assert.match(h.dialog().textContent, /Publish the page to show them/);
+      await view.unmount();
+    });
+
     test('an empty library explains how to add media instead of showing a blank dialog', async () => {
       const view = await visit('/admin/cms/faqs', { routes: {} });
       await view.unmount();

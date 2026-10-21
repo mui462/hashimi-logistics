@@ -126,7 +126,7 @@ export function adminPage(doc) {
   return {
     id: id(doc._id), title: doc.title, slug: doc.slug, pageKey: doc.pageKey ?? null, isSystem: Boolean(doc.pageKey), status: doc.status,
     excerpt: text(doc.excerpt), content: text(doc.content), heroHeading: text(doc.heroHeading), heroSubtitle: text(doc.heroSubtitle),
-    heroImage: asset(doc.heroImage), sections: pageSections(doc.sections), cta: button(doc.cta), displayOrder: doc.displayOrder ?? 0,
+    heroImage: asset(doc.heroImage), introImage: asset(doc.introImage), sections: pageSections(doc.sections), cta: button(doc.cta), displayOrder: doc.displayOrder ?? 0,
     SEO: seo(doc.SEO), createdAt: iso(doc.createdAt), updatedAt: iso(doc.updatedAt),
   };
 }
@@ -135,7 +135,7 @@ export const adminPageSummary = (doc) => ({ id: id(doc._id), title: doc.title, s
 export function publicPage(doc) {
   return {
     title: doc.title, slug: doc.slug, pageKey: doc.pageKey ?? null, excerpt: text(doc.excerpt), content: text(doc.content),
-    heroHeading: text(doc.heroHeading), heroSubtitle: text(doc.heroSubtitle), heroImage: publicAsset(doc.heroImage),
+    heroHeading: text(doc.heroHeading), heroSubtitle: text(doc.heroSubtitle), heroImage: publicAsset(doc.heroImage), introImage: publicAsset(doc.introImage),
     sections: activeItems(doc.sections).map((s) => ({ heading: text(s.heading), body: text(s.body), image: publicAsset(s.image) })),
     cta: button(doc.cta), seo: seo(doc.SEO), updatedAt: iso(doc.updatedAt),
   };
