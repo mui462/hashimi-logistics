@@ -55,9 +55,9 @@ export function PagesListPage() {
   const [version, setVersion] = useState(0);
   return (
     <AdminPage title="Pages" description="Edit the text, banner and search appearance of website pages, or add custom pages." actions={<><Button variant="secondary" onClick={() => setFilling(true)}>Fill pictures from library</Button><Button to={`${BASE}/new`}><Plus aria-hidden="true" className="h-4 w-4" />Add page</Button></>}>
-      <SystemPagesPrompt key={version} />
+      <SystemPagesPrompt key={`prompt-${version}`} />
       <FillPicturesDialog open={filling} onClose={() => setFilling(false)} onDone={() => setVersion((current) => current + 1)} />
-      <AdminListView key={version} fetcher={listCmsPages} fields={FIELDS} columns={COLUMNS} getKey={(page) => page.id} caption="Pages" emptyTitle="No pages yet" emptyDescription="The website shows its built-in pages until you create one here." />
+      <AdminListView key={`list-${version}`} fetcher={listCmsPages} fields={FIELDS} columns={COLUMNS} getKey={(page) => page.id} caption="Pages" emptyTitle="No pages yet" emptyDescription="The website shows its built-in pages until you create one here." />
     </AdminPage>
   );
 }
