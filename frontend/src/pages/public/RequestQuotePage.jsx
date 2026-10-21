@@ -1,4 +1,6 @@
 import QuoteForm from '../../components/forms/QuoteForm';
+import CmsPageContent from '../../components/sections/CmsPageContent';
+import { useCmsPage } from '../../hooks/useCmsPage';
 import Seo from '../../components/seo/Seo';
 import HeroSection from '../../components/sections/HeroSection';
 import SectionShell from '../../components/sections/SectionShell';
@@ -9,10 +11,12 @@ import { PATHS } from '../../config/paths';
 import { brand } from '../../config/brand';
 
 export default function RequestQuotePage() {
+  const { page: cms } = useCmsPage('request-quote');
   return (
     <>
-      <Seo title="Request a Quote" description={`Request a freight quote from ${brand.name} Tell us about your shipment in a few steps.`} path={PATHS.requestQuote} />
-      <HeroSection eyebrow="Request a Quote" title="Request a Freight Quote" description="Tell us about your shipment in five short steps." scene="loading" />
+      <Seo title="Request a Quote" description={`Request a freight quote from ${brand.name} Tell us about your shipment in a few steps.`} path={PATHS.requestQuote} seo={cms?.seo} />
+      <HeroSection eyebrow="Request a Quote" title="Request a Freight Quote" description="Tell us about your shipment in five short steps." scene="loading" cms={cms} />
+      <CmsPageContent page={cms} />
       <SectionShell id="quote-form" labelledBy="quote-form-heading">
         <h2 id="quote-form-heading" className="sr-only">Quote request form</h2>
         <div className="grid items-start gap-8 lg:grid-cols-[1.7fr_1fr]">

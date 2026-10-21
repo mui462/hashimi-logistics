@@ -245,6 +245,40 @@ describe('Phase 9 public website and the CMS', () => {
       await view.unmount();
     });
 
+    test('every page that was not editable before is now a built-in page: banner, content and search text come from the CMS, and unpublished keeps the built-in page', async () => {
+      const pages = [['/become-a-carrier', 'become-a-carrier'], ['/carrier-resources', 'carrier-resources'], ['/request-quote', 'request-quote'], ['/track-shipment', 'track-shipment'], ['/resources', 'resources']];
+      for (const [path, key] of pages) {
+        let view = await visit(path);
+        const builtIn = h.h1();
+        await view.unmount();
+        view = await visit(path, { [`GET /content/pages/${key}`]: ok(cmsPage({ title: key, slug: key, pageKey: key, heroHeading: `Edited ${key}`, content: `Text for ${key} from the CMS.`, seo: seo({ title: `SEO ${key}` }) })) });
+        assert.equal(h.h1(), `Edited ${key}`, path);
+        assert.match(h.text(), new RegExp(`Text for ${key} from the CMS\.`), path);
+        assert.notEqual(h.h1(), builtIn, path);
+        await view.unmount();
+      }
+    });
+
+    test('the homepage network map and quote form blocks take their text, pillars and button from the CMS, and can be hidden', async () => {
+      let view = await visit('/');
+      assert.match(h.text(), /Experience. Capacity. Flexibility./);
+      assert.match(h.text(), /Get a Freight Quote/);
+      await view.unmount();
+      const network = header({ subtitle: 'Edited eyebrow', title: 'Edited network heading', description: 'Edited network text.', button: { label: 'Read more', url: '/contact' }, items: [{ title: 'Edited pillar', description: 'Edited pillar text.', icon: 'route' }] });
+      const quote = header({ subtitle: 'Edited quote line', title: 'Edited quote heading', description: 'Edited quote text.' });
+      view = await visit('/', { 'GET /content/homepage': ok(homeData({ network, quote })) });
+      assert.match(h.text(), /Edited network heading/);
+      assert.match(h.text(), /Edited pillar text./);
+      assert.equal(h.link('Read more').getAttribute('href'), '/contact');
+      assert.match(h.text(), /Edited quote heading/);
+      assert.doesNotMatch(h.text(), /Experience. Capacity. Flexibility./);
+      await view.unmount();
+      view = await visit('/', { 'GET /content/homepage': ok(homeData({ network: header({ enabled: false, items: [] }), quote: header({ enabled: false }) })) });
+      assert.ok(!sectionIds().includes('network'));
+      assert.ok(!sectionIds().includes('get-a-quote'));
+      await view.unmount();
+    });
+
     test('the About page shows its six sections in order, and its call to action links to the existing routes', async () => {
       const view = await visit('/about');
       const ids = ['who-we-are', 'mission', 'approach', 'what-sets-us-apart', 'commitment', 'cta'];

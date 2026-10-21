@@ -316,6 +316,26 @@ describe('Phase 9 Website CMS admin', () => {
       await view.unmount();
     });
 
+    test('the network map and quote form blocks are editable, shown in the editor, and saved without section order or appearance fields', async () => {
+      const saved = homepage({ networkSection: { title: 'Our network', subtitle: 'Eyebrow', description: null, isActive: true, image: null, button: { label: 'Read more', url: '/contact' }, items: [{ id: 'a'.repeat(24), title: 'Experience', description: 'Text', icon: 'shield', displayOrder: 0, isActive: true }] }, quoteSection: { title: 'Quote us', subtitle: null, description: null, isActive: false, image: null, button: null } });
+      const view = await visit('/admin/cms/homepage', { routes: { 'GET /admin/cms/homepage': () => ({ data: saved }), 'PATCH /admin/cms/homepage': () => ({ data: saved }) } });
+      assert.match(h.text(), /Network map block/);
+      assert.match(h.text(), /Quote form block/);
+      await h.submit(h.form('Homepage editor'));
+      const body = h.called('PATCH /admin/cms/homepage')[0].body;
+      assert.equal(body.networkSection.title, 'Our network');
+      assert.deepEqual(body.networkSection.button, { label: 'Read more', url: '/contact' });
+      assert.equal(body.networkSection.items.length, 1);
+      assert.equal(body.networkSection.items[0].title, 'Experience');
+      assert.equal(body.quoteSection.isActive, false);
+      for (const key of ['networkSection', 'quoteSection']) {
+        assert.ok(!('appearance' in body[key]), `${key} has no appearance`);
+        assert.ok(!('image' in body[key]) || body[key].image === null || body[key].image === undefined, `${key} has no image`);
+      }
+      assert.ok(!body.sectionOrder.includes('network') && !body.sectionOrder.includes('quote'), 'fixed blocks are not in the section order');
+      await view.unmount();
+    });
+
     test('an invalid overlay strength is stopped in the form', async () => {
       const view = await visit('/admin/cms/homepage');
       await h.fill({ 'Overlay strength': '7' });

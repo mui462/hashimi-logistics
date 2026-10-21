@@ -197,7 +197,7 @@ export const CMS_STATUSES = list('draft', 'published', 'archived');
 /** Blog posts add a scheduled state. A scheduled post goes live by itself once `scheduledAt` has passed (see cms/content.service.js). */
 export const BLOG_STATUSES = list('draft', 'scheduled', 'published', 'archived');
 /** System pages the public site routes to. Their key and slug never change, so editing content cannot remove a route. */
-export const PAGE_KEYS = list('about', 'services', 'industries', 'service-areas', 'for-shippers', 'for-carriers', 'how-it-works', 'faq', 'contact', 'privacy', 'terms');
+export const PAGE_KEYS = list('about', 'services', 'industries', 'service-areas', 'for-shippers', 'for-carriers', 'how-it-works', 'faq', 'contact', 'privacy', 'terms', 'become-a-carrier', 'carrier-resources', 'request-quote', 'track-shipment', 'resources');
 /** Homepage sections whose order and visibility the Super Admin controls. The default order is the Phase 4 order. */
 export const HOMEPAGE_SECTION_KEYS = list('trust', 'services', 'whyChooseUs', 'howItWorks', 'industries', 'crossBorder', 'serviceAreas', 'stats', 'testimonials', 'faq', 'finalCTA');
 export const MEDIA_PROVIDERS = list('external', 'cloudinary', 's3', 'local', 'memory');

@@ -25,6 +25,9 @@ export const HOME_SECTIONS = [
   { key: 'serviceAreas', field: 'serviceAreas', label: 'Service areas' },
   { key: 'stats', field: 'statsSection', label: 'Statistics', stats: true },
   { key: 'testimonials', field: 'testimonials', label: 'Testimonials' },
+  // Fixed-position blocks (map, then quote form, just before the FAQ): editable text, but not part of the section order.
+  { key: 'network', field: 'networkSection', label: 'Network map block', list: 'items', itemLabel: 'Pillar', max: 6, fixed: true, noImage: true, subtitleLabel: 'Small line above the heading (built-in: Our Network)', buttonLabel: 'Button under the pillars (built-in: Learn more, to the About page)' },
+  { key: 'quote', field: 'quoteSection', label: 'Quote form block', fixed: true, noImage: true, noButton: true, subtitleLabel: 'Small line above the heading (built-in: Request a Quote)' },
   { key: 'faq', field: 'faq', label: 'FAQ' },
   { key: 'finalCTA', field: 'finalCTA', label: 'Final call to action', buttons: true },
 ];
@@ -101,7 +104,7 @@ function buildBody(v) {
     body[s.field] = {
       ...sectionBody(section),
       // A section is saved as a whole, so its appearance always travels with its content.
-      appearance: appearanceBody(s.field, section.appearance),
+      ...(SECTION_APPEARANCE_CAPABILITIES[s.field] ? { appearance: appearanceBody(s.field, section.appearance) } : {}),
       ...(s.list ? { [s.list]: itemsBody(section[s.list], s.field === 'trust') } : {}),
       ...(s.field === 'servicesSection' ? { cardImages: Object.entries(section.cardImages ?? {}).filter(([, image]) => image?.url).map(([slug, image]) => ({ slug, image: mediaBody(image) })) } : {}),
       ...(s.field === 'industries' ? { cardImages: Object.entries(section.cardImages ?? {}).filter(([, image]) => image?.url).map(([slug, image]) => ({ slug, image: mediaBody(image) })) } : {}),
@@ -160,6 +163,7 @@ const options = (kind, values) => values.map((value) => ({ value, label: APPEARA
 function AppearanceFields({ form, spec }) {
   const caps = SECTION_APPEARANCE_CAPABILITIES[spec.field] ?? {};
   const prefix = `sections.${spec.field}.appearance`;
+  if (!SECTION_APPEARANCE_CAPABILITIES[spec.field]) return null;
   return (
     <fieldset className="space-y-4 rounded-md border border-steel-200 p-4">
       <legend className="px-1 text-base font-bold">Appearance</legend>
@@ -179,14 +183,14 @@ function SectionPanel({ form, spec }) {
     <Panel title={spec.label} description="Leave a field empty to keep the website’s built-in text for it.">
       <div className="space-y-5">
         <CmsText form={form} name={`${prefix}.title`} label="Heading" maxLength={150} />
-        <CmsText form={form} name={`${prefix}.subtitle`} label="Subheading" maxLength={200} />
+        <CmsText form={form} name={`${prefix}.subtitle`} label={spec.subtitleLabel ?? 'Subheading'} maxLength={200} />
         <CmsTextArea form={form} name={`${prefix}.description`} label="Introduction" rows={3} maxLength={1500} />
         {spec.key === 'services' ? (
           <CmsMedia form={form} name={`${prefix}.image`} label="Section background image (optional)" hint="Shown behind the Services cards on the homepage with a dark overlay for readability. Choose or upload a picture to replace it; remove it to restore the built-in background. Save the homepage to publish the change." />
-        ) : spec.key !== 'trust' && (
+        ) : spec.key !== 'trust' && !spec.noImage && (
           <CmsMedia form={form} name={`${prefix}.image`} label="Section image (optional)" />
         )}
-        {!spec.buttons && <CmsButton form={form} name={`${prefix}.button`} label="Section button (optional)" />}
+        {!spec.buttons && !spec.noButton && <CmsButton form={form} name={`${prefix}.button`} label={spec.buttonLabel ?? 'Section button (optional)'} />}
         {spec.buttons && (<><CmsButton form={form} name={`${prefix}.primaryButton`} label="Main button" /><CmsButton form={form} name={`${prefix}.secondaryButton`} label="Second button (optional)" /></>)}
         {spec.key === 'services' && (
           <fieldset className="space-y-4 rounded-md border border-steel-200 p-4">
@@ -209,7 +213,7 @@ function SectionPanel({ form, spec }) {
             {builtInIndustries.map((ind) => <CmsMedia key={ind.slug} form={form} name={`${prefix}.cardImages.${ind.slug}`} label={`${ind.title} card picture`} />)}
           </fieldset>
         )}
-        {spec.list && <CmsRepeater form={form} name={`${prefix}.${spec.list}`} label={spec.itemLabel} addLabel={`Add a ${spec.itemLabel.toLowerCase()}`} max={spec.key === 'trust' ? 8 : 12} blank={() => ({ title: '', description: '', icon: '', ...(spec.key === 'trust' ? { image: null } : {}), isActive: true })} render={(p) => <ItemFields form={form} prefix={p} withImage={spec.key === 'trust'} />} />}
+        {spec.list && <CmsRepeater form={form} name={`${prefix}.${spec.list}`} label={spec.itemLabel} addLabel={`Add a ${spec.itemLabel.toLowerCase()}`} max={spec.max ?? (spec.key === 'trust' ? 8 : 12)} blank={() => ({ title: '', description: '', icon: '', ...(spec.key === 'trust' ? { image: null } : {}), isActive: true })} render={(p) => <ItemFields form={form} prefix={p} withImage={spec.key === 'trust'} />} />}
         {spec.highlights && <CmsList form={form} name={`${prefix}.highlights`} label="Highlight" max={10} addLabel="Add a highlight" hint="Cross-border service is U.S. to Canada and U.S. to Mexico only." />}
         {spec.stats && (
           <>

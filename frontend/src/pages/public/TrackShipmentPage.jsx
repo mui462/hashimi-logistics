@@ -6,6 +6,8 @@ import EmptyState from '../../components/common/EmptyState';
 import ErrorState from '../../components/common/ErrorState';
 import LoadingState from '../../components/common/LoadingState';
 import TextInput from '../../components/forms/TextInput';
+import CmsPageContent from '../../components/sections/CmsPageContent';
+import { useCmsPage } from '../../hooks/useCmsPage';
 import Seo from '../../components/seo/Seo';
 import HeroSection from '../../components/sections/HeroSection';
 import SectionShell from '../../components/sections/SectionShell';
@@ -15,6 +17,7 @@ import { ShipmentNotFoundError, TrackingUnavailableError, trackShipment } from '
 import { brand } from '../../config/brand';
 
 export default function TrackShipmentPage() {
+  const { page: cms } = useCmsPage('track-shipment');
   const [number, setNumber] = useState('');
   const [validation, setValidation] = useState('');
   const [state, setState] = useState({ status: 'idle', shipment: null, error: null, searched: '' });
@@ -46,8 +49,9 @@ export default function TrackShipmentPage() {
 
   return (
     <>
-      <Seo title="Track Shipment" description={`Track your ${brand.name} shipment with your tracking number.`} path={PATHS.trackShipment} />
-      <HeroSection eyebrow="Track Shipment" title="Track Your Shipment" description="Enter the tracking number provided by our team." scene="highway" />
+      <Seo title="Track Shipment" description={`Track your ${brand.name} shipment with your tracking number.`} path={PATHS.trackShipment} seo={cms?.seo} />
+      <HeroSection eyebrow="Track Shipment" title="Track Your Shipment" description="Enter the tracking number provided by our team." scene="highway" cms={cms} />
+      <CmsPageContent page={cms} />
       <SectionShell id="tracking" labelledBy="tracking-heading">
         <div className="mx-auto max-w-3xl">
           <h2 id="tracking-heading" className="sr-only">Shipment lookup</h2>

@@ -89,6 +89,9 @@ const homepageSchema = createSchema(
     }),
     // Pictures the Super Admin chose for the built-in service-area cards, one per area slug.
     serviceAreas: section({ cardImages: [new mongoose.Schema({ slug: requiredText(80, 'Service area'), image: mediaAssetSchema }, { _id: false })] }),
+    // Fixed-position homepage blocks (not part of `sectionOrder`): the network map block and the quote form block.
+    networkSection: section({ items: [contentItemSchema] }),
+    quoteSection: section(),
     testimonials: section(),
     faq: section(),
     finalCTA: section({ primaryButton: buttonSchema, secondaryButton: buttonSchema }),

@@ -5,7 +5,7 @@ import { faqs as builtInFaqs } from '../content/faqs';
 import { crossBorder as builtInCrossBorder, finalCta, howItWorksSteps, serviceAreas as builtInAreas, stats as builtInStats, trustItems, whyItems } from '../content/home';
 import { industries as builtInIndustries } from '../content/industries';
 import { services as builtInServices } from '../content/services';
-import { actionsFrom, list, text } from './siteContent';
+import { actionsFrom, list, text, toAction } from './siteContent';
 
 const COUNTRY = { US: 'United States', CA: 'Canada', MX: 'Mexico' };
 const asItems = (items) => list(items).map((item) => ({ icon: item.icon || 'check', title: item.title, text: item.description || '' }));
@@ -69,6 +69,9 @@ export function resolveHome(cms, company = brand) {
       },
       serviceAreas: { enabled: sec('serviceAreas').enabled !== false, title: text(sec('serviceAreas').title, undefined), description: text(sec('serviceAreas').description, undefined), cardImages: Object.fromEntries(list(sec('serviceAreas').cardImages).map((c) => [c.slug, c.image])), items: collection(cms, 'serviceAreas', areaCards, builtInAreas) },
       stats: { enabled: sec('stats').enabled !== false, data: statItems.length ? { enabled: true, title: text(sec('stats').title, builtInStats.title), items: statItems.map((s) => ({ icon: 'gauge', label: s.label, value: s.value, text: s.description || '' })) } : { ...builtInStats, title: text(sec('stats').title, builtInStats.title) } },
+      // Fixed-position blocks: not in the section order, but their text, pillars and button are editable.
+      network: { enabled: sec('network').enabled !== false, eyebrow: text(sec('network').subtitle, undefined), title: text(sec('network').title, undefined), description: text(sec('network').description, undefined), pillars: list(sec('network').items).map((i) => ({ icon: i.icon || 'shield', title: i.title, text: i.description || '' })), action: toAction(sec('network').button) ?? undefined },
+      quote: { enabled: sec('quote').enabled !== false, eyebrow: text(sec('quote').subtitle, undefined), title: text(sec('quote').title, undefined), description: text(sec('quote').description, undefined) },
       testimonials: { enabled: sec('testimonials').enabled !== false, title: text(sec('testimonials').title, undefined), items: testimonials },
       faq: { enabled: sec('faq').enabled !== false, title: text(sec('faq').title, undefined), description: text(sec('faq').description, undefined), items: faqPreview },
       finalCTA: {
