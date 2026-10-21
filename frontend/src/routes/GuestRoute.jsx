@@ -1,20 +1,17 @@
 import { useRef } from 'react';
 import { Navigate, Outlet, useLocation, useSearchParams } from 'react-router-dom';
-import SignedInElsewhere from '../components/auth/SignedInElsewhere';
 import LoadingState from '../components/common/LoadingState';
 import { ACCOUNT_TYPES } from '../config/constants';
 import { PATHS, ROLE_HOME_PATHS } from '../config/paths';
 import { useAuth } from '../hooks/useAuth';
 
 const PORTAL_ROLES = { customer: ACCOUNT_TYPES.CUSTOMER, carrier: ACCOUNT_TYPES.CARRIER };
-const PORTAL_LABELS = { customer: 'Customer', carrier: 'Carrier' };
 
-/** The account type a sign-in or register page is for, and how to name it; null when the page is not specific to one. */
-function requestedAccount(pathname, params) {
-  if (pathname === PATHS.adminLogin) return { role: ACCOUNT_TYPES.SUPER_ADMIN, label: 'Super Admin sign in' };
+/** The account type a sign-in or register page is for; null when the page is not specific to one. */
+function requestedRole(pathname, params) {
+  if (pathname === PATHS.adminLogin) return ACCOUNT_TYPES.SUPER_ADMIN;
   const kind = pathname === PATHS.register ? params.get('type') : pathname === PATHS.login ? params.get('portal') : null;
-  if (!Object.hasOwn(PORTAL_ROLES, kind ?? '')) return null;
-  return { role: PORTAL_ROLES[kind], label: `${PORTAL_LABELS[kind]} ${pathname === PATHS.register ? 'registration' : 'sign in'}` };
+  return Object.hasOwn(PORTAL_ROLES, kind ?? '') ? PORTAL_ROLES[kind] : null;
 }
 
 export default function GuestRoute() {
@@ -32,10 +29,10 @@ export default function GuestRoute() {
     return <LoadingState label="Checking your session" fullPage />;
   }
   if (user) {
-    // Signed in as a different kind of account than the page is for (the Super Admin opening the Customer sign-in): let the
-    // person choose, instead of silently landing on the other dashboard.
-    const wanted = requestedAccount(location.pathname, params);
-    if (alreadySignedIn.current && wanted && wanted.role !== user.role) return <SignedInElsewhere wantedLabel={wanted.label} />;
+    // The browser is signed in as another kind of account (the Super Admin, while a customer or carrier opens their own sign-in):
+    // show the sign-in form they asked for. Signing in there replaces the session and then lands on the right dashboard.
+    const wanted = requestedRole(location.pathname, params);
+    if (alreadySignedIn.current && wanted && wanted !== user.role) return <Outlet />;
     const home = ROLE_HOME_PATHS[user.role];
     const requestedPath = location.state?.from?.pathname;
     const destination = requestedPath?.startsWith(home) ? requestedPath : home;
