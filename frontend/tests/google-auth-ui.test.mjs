@@ -102,12 +102,13 @@ describe('Customer and carrier authentication pages', () => {
     for (const [as, home] of [['customer', '/customer'], ['carrier', '/carrier'], ['super_admin', '/admin']]) {
       for (const portal of ['customer', 'carrier']) {
         const sameAccount = as === portal;
-        test(sameAccount ? `${as} opening /login?portal=${portal} is sent to their own home, ${home}` : `${as} opening /login?portal=${portal} is asked whether to sign out, not sent to ${home}`, async () => {
+        test(sameAccount ? `${as} opening /login?portal=${portal} is sent to their own home, ${home}` : `${as} opening /login?portal=${portal} gets the sign-in form, not sent to ${home}`, async () => {
           const view = await h.visit(`/login?portal=${portal}`, { as, routes: { ...googleConfig(false), ...quiet }, wait: false });
           if (sameAccount) await arriveUnder(view, home);
           else {
             for (let attempt = 0; attempt < 40 && !document.querySelector('h1'); attempt += 1) await new Promise((resolve) => setTimeout(resolve, 25));
-            assert.equal(document.querySelector('h1')?.textContent, 'You are already signed in');
+            assert.equal(document.querySelector('h1')?.textContent, `${portal === 'customer' ? 'Customer' : 'Carrier'} sign in`);
+            assert.ok(document.querySelector('form'), 'the sign-in form is shown');
             assert.ok(!view.path().startsWith(home), 'the dashboard of the signed-in account is not opened');
           }
           await view.unmount();
