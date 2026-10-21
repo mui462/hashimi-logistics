@@ -20,6 +20,8 @@ import { createCmsPage, getCmsPage, listCmsPages, runCmsPageAction, saveCmsPage 
 import { formatDate } from '../../../utils/format';
 
 const BASE = '/admin/cms/pages';
+/** Built-in pages whose introduction block has a picture of its own. */
+const INTRO_IMAGE_PAGES = ['for-shippers', 'for-carriers', 'services', 'industries'];
 const FIELDS = [
   { name: 'q', label: 'Search pages', type: 'search' },
   { name: 'status', label: 'Status', type: 'select', options: ['draft', 'published', 'archived'].map((value) => ({ value, label: humanize(value) })) },
@@ -68,7 +70,7 @@ function aboutSections(saved = []) {
 }
 const initialValues = (page, key) => ({
   title: str(page?.title) || (key ? key.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()) : ''), slug: str(page?.slug), pageKey: page?.pageKey ?? key ?? '', excerpt: str(page?.excerpt), content: str(page?.content),
-  heroHeading: str(page?.heroHeading), heroSubtitle: str(page?.heroSubtitle), heroImage: mediaValue(page?.heroImage),
+  heroHeading: str(page?.heroHeading), heroSubtitle: str(page?.heroSubtitle), heroImage: mediaValue(page?.heroImage), introImage: mediaValue(page?.introImage),
   sections: (page?.pageKey ?? key) === 'about' ? aboutSections(page?.sections) : (page?.sections ?? []).map(toFormSection),
   cta: buttonValue(page?.cta), SEO: seoValue(page?.SEO),
 });
@@ -84,7 +86,7 @@ function PageForm({ page, startKey, onSaved }) {
     submit: (v, extra) => {
       const body = {
         title: trimmed(v.title), excerpt: trimmed(v.excerpt), content: trimmed(v.content), heroHeading: trimmed(v.heroHeading), heroSubtitle: trimmed(v.heroSubtitle),
-        heroImage: mediaBody(v.heroImage), cta: buttonBody(v.cta), SEO: seoBody(v.SEO),
+        heroImage: mediaBody(v.heroImage), introImage: mediaBody(v.introImage), cta: buttonBody(v.cta), SEO: seoBody(v.SEO),
         sections: v.sections.map((s, index) => ({ heading: trimmed(s.heading), body: trimmed(s.body), image: mediaBody(s.image), displayOrder: index * 10, isActive: s.isActive })),
         ...(!isSystem && trimmed(v.slug) && trimmed(v.slug) !== page?.slug ? { slug: trimmed(v.slug) } : {}),
         ...(isNew && v.pageKey ? { pageKey: v.pageKey } : {}),
@@ -97,6 +99,7 @@ function PageForm({ page, startKey, onSaved }) {
   });
   return (
     <CmsForm form={form} label="Page editor" saveLabel={isNew ? 'Create page' : 'Save changes'}>
+      {page && page.status !== 'published' && <p role="note" className="rounded-md border border-steel-300 bg-steel-50 p-4 text-base">This page is a <strong>{page.status}</strong>, so the website still shows its built-in version, without your pictures or text. Save your changes, then press <strong>Publish</strong> at the top of this page to make them live (allow about a minute).</p>}
       <Panel title="Page" description={isSystem ? `This is the website’s built-in “${humanize(page?.pageKey ?? startKey)}” page. Its address is fixed.` : undefined}>
         <div className="space-y-5">
           <CmsText form={form} name="title" label="Page title" maxLength={200} />
@@ -108,7 +111,8 @@ function PageForm({ page, startKey, onSaved }) {
           <CmsTextArea form={form} name="excerpt" label="Summary" hint="A short introduction." rows={3} maxLength={500} />
           <CmsText form={form} name="heroHeading" label="Banner heading" hint="Leave empty to use the built-in heading." maxLength={200} />
           <CmsText form={form} name="heroSubtitle" label="Banner subtitle" maxLength={300} />
-          <CmsMedia form={form} name="heroImage" label="Banner image" />
+          <CmsMedia form={form} name="heroImage" label="Banner image" hint="The large picture behind the banner heading. The website shows it once this page is published." />
+          {INTRO_IMAGE_PAGES.includes(page?.pageKey ?? startKey) && <CmsMedia form={form} name="introImage" label="Introduction picture" hint="The framed picture beside the introduction block under the banner. Leave empty to keep the built-in illustration." />}
           <CmsTextArea form={form} name="content" label="Main text" hint="Plain text. Blank lines start a new paragraph. HTML is not allowed." rows={10} maxLength={100000} />
         </div>
       </Panel>

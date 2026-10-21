@@ -26,7 +26,7 @@ export default function ForShippersPage() {
           'Whether it is a single shipment or a recurring lane, domestic or between the U.S., Canada and Mexico, you deal with one team.',
         ]}
         highlights={['Truckload and LTL', 'Domestic and cross-border', 'Tracking by tracking number', 'One coordination team']}
-        media={{ scene: 'loading', alt: '' }}
+        media={{ image: cms?.introImage, scene: 'loading', alt: '' }}
       />
       <FeatureGrid id="shipper-benefits" eyebrow="Shippers" title="What You Can Expect" items={shipperSections} tone="muted" />
       <StepsSection steps={howItWorksSteps} id="shipper-steps" title="How Shipping With Us Works" />

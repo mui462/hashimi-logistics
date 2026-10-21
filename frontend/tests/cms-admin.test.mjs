@@ -257,6 +257,25 @@ describe('Phase 9 Website CMS admin', () => {
       await view.unmount();
     });
 
+    test('a picture can be added by its link from inside the picker and is chosen straight away', async () => {
+      const added = media({ id: 'e'.repeat(24), fileName: 'dock.jpg', url: 'https://cdn.example.com/new/dock.jpg', altText: 'New dock' });
+      const view = await visit('/admin/cms/services/new', { routes: { 'GET /admin/cms/media': () => ({ data: page([], { folders: [], storage: {} }) }), 'POST /admin/cms/media/external': () => ({ status: 201, data: added }) } });
+      await h.click(h.button('Choose from library'));
+      assert.match(h.dialog().textContent, /Add a new picture/);
+      assert.match(h.dialog().textContent, /File uploads are not set up/);
+      await h.fill({ 'Picture web address': 'http://insecure.example.com/a.jpg' });
+      await h.submit(h.form('Add a picture by link'));
+      assert.match(h.dialog().textContent, /starting with https/);
+      assert.equal(h.called('POST /admin/cms/media/external').length, 0);
+      await h.fill({ 'Picture web address': 'https://cdn.example.com/new/dock.jpg', 'Alt text': 'New dock' });
+      await h.submit(h.form('Add a picture by link'));
+      const sent = h.called('POST /admin/cms/media/external')[0].body;
+      assert.deepEqual({ url: sent.url, fileName: sent.fileName, type: sent.type, altText: sent.altText }, { url: 'https://cdn.example.com/new/dock.jpg', fileName: 'dock.jpg', type: 'image', altText: 'New dock' });
+      assert.equal(h.dialog(), null);
+      assert.ok(document.querySelector('img[alt="Preview of Card image"]'));
+      await view.unmount();
+    });
+
     test('an empty library explains how to add media instead of showing a blank dialog', async () => {
       const view = await visit('/admin/cms/faqs', { routes: {} });
       await view.unmount();

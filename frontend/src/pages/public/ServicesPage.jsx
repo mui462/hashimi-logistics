@@ -32,7 +32,7 @@ export default function ServicesPage() {
         title="One partner for the freight you move"
         paragraphs={['Every shipment is different. Choose the service that matches your freight, or tell us about it and we will help you decide.']}
         highlights={['Full truckload and LTL', 'Dry van, reefer and flatbed', 'Expedited and specialized freight', 'Cross-border: U.S., Canada and Mexico']}
-        media={{ scene: 'highway', alt: '' }}
+        media={{ image: cms?.introImage, scene: 'highway', alt: '' }}
       />
       <ServiceGrid services={items} cardImages={cardImages} id="service-grid" eyebrow="All services" title="Choose a Service" tone="muted" />
       <FeatureGrid id="why-choose-us" eyebrow="Why choose us" title={`Why Choose ${brand.shortName}`} items={whyItems} tone="dark" />

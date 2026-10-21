@@ -32,7 +32,7 @@ export default function IndustriesPage() {
           'Different freight has different needs: equipment type, loading method, temperature, timing and delivery requirements all vary by industry.',
           'Understanding how your industry ships helps us ask the right questions up front and coordinate the right carrier and equipment for each move.',
         ]}
-        media={{ scene: 'warehouse', alt: '' }}
+        media={{ image: cms?.introImage, scene: 'warehouse', alt: '' }}
       />
       <CTASection {...finalCta} />
     </>

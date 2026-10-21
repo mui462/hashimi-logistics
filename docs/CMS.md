@@ -251,3 +251,13 @@ content. Anything outside a section's list is refused with 422.
   `network` and `quote`). They have a heading, a small line above it, an introduction and an on/off switch; the network block also
   has up to six pillars and a button. They keep their fixed place on the page (map, then quote form, then the FAQ), so they are not part of
   `sectionOrder` and have no appearance presets. Empty fields keep the built-in text.
+
+## Pictures
+
+* **Choosing a picture** (any picture field in the CMS): the picker now also has **Add a new picture**. Without leaving the dialog you can
+  upload a file (when file storage is set up) or paste the https address of a picture that is already online; the new picture is
+  chosen straight away. Linked pictures need no storage credentials.
+* **Banner picture** of every built-in page: Pages -> the page -> Banner image.
+* **Introduction picture** of For Shippers, For Carriers, Services and Industries (the framed picture beside the intro text):
+  Pages -> the page -> Introduction picture (`Page.introImage`). Empty keeps the built-in illustration.
+* A page picture appears on the website only after the page is **published** (a draft keeps the built-in page); the page editor says so.

@@ -18,6 +18,8 @@ const pageSchema = createSchema(
     heroHeading: textField(200),
     heroSubtitle: textField(300),
     heroImage: mediaAssetSchema,
+    // The picture beside the introduction block of the built-in pages that have one (For Shippers, For Carriers, Services, Industries).
+    introImage: mediaAssetSchema,
     sections: {
       type: [pageSectionSchema],
       validate: { validator: (list) => list.length <= 30, message: 'Use 30 sections or fewer.' },

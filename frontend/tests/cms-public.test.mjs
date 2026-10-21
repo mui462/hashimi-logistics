@@ -259,6 +259,18 @@ describe('Phase 9 public website and the CMS', () => {
       }
     });
 
+    test('the introduction picture of For Shippers, For Carriers, Services and Industries comes from the CMS page', async () => {
+      for (const [path, key] of [['/for-shippers', 'for-shippers'], ['/for-carriers', 'for-carriers'], ['/services', 'services'], ['/industries', 'industries']]) {
+        const url = `https://cdn.example.com/${key}-intro.jpg`;
+        let view = await visit(path);
+        assert.equal(document.querySelector(`img[src="${url}"]`), null, `${path} starts with the built-in illustration`);
+        await view.unmount();
+        view = await visit(path, { [`GET /content/pages/${key}`]: ok(cmsPage({ title: key, slug: key, pageKey: key, introImage: { url, altText: 'Intro picture' } })) });
+        assert.ok(document.querySelector(`main img[src="${url}"]`), `${path} shows the CMS introduction picture`);
+        await view.unmount();
+      }
+    });
+
     test('the homepage network map and quote form blocks take their text, pillars and button from the CMS, and can be hidden', async () => {
       let view = await visit('/');
       assert.match(h.text(), /Experience. Capacity. Flexibility./);

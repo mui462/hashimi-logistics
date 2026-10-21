@@ -108,6 +108,7 @@ export const pageShape = {
   heroHeading: plain(200),
   heroSubtitle: plain(300),
   heroImage: mediaOrNull,
+  introImage: mediaOrNull,
   sections: list(z.object({ heading: plain(150), body: plain(20000), image: mediaOrNull.optional(), displayOrder: displayOrder.optional(), isActive: z.boolean().optional() }).strict(), 30),
   cta: nullable(button),
   displayOrder,
