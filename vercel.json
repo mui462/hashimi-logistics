@@ -12,6 +12,14 @@
   "crons": [
     { "path": "/api/v1/internal/deliveries/run", "schedule": "0 6 * * *" }
   ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.hashimilogistics.com" }],
+      "destination": "https://hashimilogistics.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/sitemap.xml", "destination": "/api" },
