@@ -61,6 +61,7 @@ export const legal = {
     { title: 'Information We Collect', text: 'This section will describe the categories of information collected through forms and other interactions on the website.' },
     { title: 'How We Use Information', text: 'This section will describe the purposes for which information is used.' },
     { title: 'Sharing of Information', text: 'This section will describe if and when information is shared with others.' },
+    { title: 'Cookies and Similar Technologies', text: 'We use cookies that are strictly necessary, for example to keep you signed in and the website secure. Optional analytics and marketing technologies stay off unless you allow them in the cookie banner or under Cookie settings in the footer. Your choice is saved in your browser for up to 12 months. If you use the AI assistant, the questions you type are sent to a third-party AI provider to write the answer, so please do not enter personal information.' },
     { title: 'Data Retention and Security', text: 'This section will describe retention and security practices once they are confirmed.' },
     { title: 'Your Choices and Rights', text: 'This section will describe the choices and rights available to you.' },
     { title: 'Changes to This Policy', text: 'This section will describe how updates to the policy are communicated.' },

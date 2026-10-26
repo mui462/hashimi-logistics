@@ -454,7 +454,14 @@ describe('frontend routing, guards, and authentication', () => {
       for (const file of files) {
         // The one allowed use: on a reload, main.jsx clears the router's saved scroll positions. Nothing is ever stored.
         const text = readFileSync(`${ROOT}src/${file}`, 'utf8').replace("sessionStorage.removeItem('react-router-scroll-positions')", '');
-        assert.ok(!/localStorage|sessionStorage|indexedDB/.test(text), `${file} uses browser storage`);
+        if (file.replaceAll('\\', '/') === 'utils/consentStore.js') {
+          // The other allowed use: the visitor's cookie choice (a few booleans, nothing sensitive), only ever under its own key.
+          assert.ok(!/sessionStorage|indexedDB/.test(text), `${file} uses other browser storage`);
+          const calls = text.match(/localStorage\??\.(getItem|setItem|removeItem)\([^)]*\)/g) ?? [];
+          assert.ok(calls.length > 0 && calls.every((call) => call.includes('CONSENT_STORAGE_KEY')), `${file} must only touch the cookie-choice key`);
+        } else {
+          assert.ok(!/localStorage|sessionStorage|indexedDB/.test(text), `${file} uses browser storage`);
+        }
         assert.ok(!/Authorization|Bearer /.test(text), `${file} sets an Authorization header`);
       }
     });
