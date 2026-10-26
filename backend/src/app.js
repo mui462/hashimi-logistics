@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { globalLimiter } from './middleware/rateLimiters.js';
+import { captureRequestContext } from './services/activity.service.js';
 import { requireTrustedOrigin } from './middleware/trustedOrigin.js';
 import sitemapRoutes from './cms/sitemap.routes.js';
 import apiRoutes from './routes/index.js';
@@ -45,6 +46,8 @@ app.use(
   })
 );
 app.use(globalLimiter);
+// Before any request body is read: file uploads consume the stream, after which req.ip is unavailable on Vercel.
+app.use(captureRequestContext);
 // Every route keeps the 10kb body limit except the Super Admin CMS API, whose pages and posts are longer than a form post.
 // That one is parsed later (routes/index.js) with a larger limit, and only after the caller is authenticated as Super Admin.
 const defaultJson = express.json({ limit: '10kb' });
