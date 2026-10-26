@@ -18,6 +18,9 @@ for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'Node', 'Ev
   }
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+// A browser sending Global Privacy Control has already answered the cookie question, so the cookie banner never holds up a form here.
+// (tests/cookie-consent.test.mjs covers the banner itself.)
+Object.defineProperty(dom.window.navigator, 'globalPrivacyControl', { value: true, configurable: true });
 window.scrollTo = () => {};
 window.matchMedia = window.matchMedia || (() => ({ matches: false, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {} }));
 

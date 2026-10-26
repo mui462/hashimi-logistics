@@ -13,6 +13,7 @@ export class ApiRequestError extends Error {
 }
 
 export function toApiRequestError(error) {
+  if (error instanceof ApiRequestError) return error;
   if (error.response) {
     const { status, data } = error.response;
     return new ApiRequestError(data?.message || FALLBACK_MESSAGE, {

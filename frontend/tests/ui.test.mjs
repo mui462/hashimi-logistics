@@ -22,6 +22,9 @@ for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'Node', 'Ev
   }
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+// A browser sending Global Privacy Control has already answered the cookie question, so the cookie banner never holds up a form here.
+// (tests/cookie-consent.test.mjs covers the banner itself.)
+Object.defineProperty(dom.window.navigator, 'globalPrivacyControl', { value: true, configurable: true });
 window.scrollTo = () => {};
 
 const require = createRequire(`${ROOT}package.json`);
@@ -455,10 +458,10 @@ describe('frontend routing, guards, and authentication', () => {
         // The one allowed use: on a reload, main.jsx clears the router's saved scroll positions. Nothing is ever stored.
         const text = readFileSync(`${ROOT}src/${file}`, 'utf8').replace("sessionStorage.removeItem('react-router-scroll-positions')", '');
         if (file.replaceAll('\\', '/') === 'utils/consentStore.js') {
-          // The other allowed use: the visitor's cookie choice (a few booleans, nothing sensitive), only ever under its own key.
-          assert.ok(!/sessionStorage|indexedDB/.test(text), `${file} uses other browser storage`);
-          const calls = text.match(/localStorage\??\.(getItem|setItem|removeItem)\([^)]*\)/g) ?? [];
-          assert.ok(calls.length > 0 && calls.every((call) => call.includes('CONSENT_STORAGE_KEY')), `${file} must only touch the cookie-choice key`);
+          // The other allowed use: the visitor's cookie choice and 'banner closed' flag (a few booleans, nothing sensitive), only under their own keys.
+          assert.ok(!/indexedDB/.test(text), `${file} uses other browser storage`);
+          const calls = text.match(/(localStorage|sessionStorage)\??\.(getItem|setItem|removeItem)\([^)]*\)/g) ?? [];
+          assert.ok(calls.length > 0 && calls.every((call) => /CONSENT_(STORAGE|DISMISS)_KEY/.test(call)), `${file} must only touch its own cookie-choice keys`);
         } else {
           assert.ok(!/localStorage|sessionStorage|indexedDB/.test(text), `${file} uses browser storage`);
         }

@@ -1,11 +1,11 @@
 import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from 'react';
 import { CONSENT_CATEGORIES } from '../config/consent';
-import { acceptAll, getConsentSnapshot, rejectAll, saveConsent, subscribe } from '../utils/consentStore';
+import { acceptAll, dismissBanner, getConsentSnapshot, rejectAll, saveConsent, subscribe } from '../utils/consentStore';
 
 const ConsentContext = createContext(null);
 
 // Nothing is rendered or loaded on the server/prerender: treat the choice as already made and everything optional as off.
-const SERVER_SNAPSHOT = { status: 'saved', choices: Object.fromEntries(CONSENT_CATEGORIES.map((category) => [category.key, false])), savedAt: null };
+const SERVER_SNAPSHOT = { status: 'saved', choices: Object.fromEntries(CONSENT_CATEGORIES.map((category) => [category.key, false])), savedAt: null, dismissed: true, gateOpen: false };
 
 /** Cookie choices for the public website. `hasConsent('analytics')` is the only thing optional scripts should ask. */
 export function ConsentProvider({ children }) {
@@ -23,7 +23,10 @@ export function ConsentProvider({ children }) {
       status: state.status,
       choices: state.choices,
       hasConsent: (category) => state.choices[category] === true,
-      needsChoice: state.status === 'unset',
+      // Show the banner while there is no choice, unless it was closed this session; an action waiting on a choice overrides that.
+      needsChoice: state.status === 'unset' && (!state.dismissed || state.gateOpen),
+      required: state.gateOpen,
+      dismiss: dismissBanner,
       settingsOpen,
       save,
       acceptAll: accept,
