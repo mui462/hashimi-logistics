@@ -3,6 +3,7 @@ import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { brand, contactDetails, socialLinks } from '../../config/brand';
 import { footerLinks, legalLinks } from '../../config/navigation';
 import { PATHS } from '../../config/paths';
+import { useConsent } from '../../context/ConsentContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import Container from '../common/Container';
 import Logo from '../common/Logo';
@@ -18,6 +19,7 @@ export default function Footer({
   legal = legalLinks,
 }) {
   const site = useSiteContent();
+  const consent = useConsent();
   const company = companyProp ?? site?.company ?? brand;
   const contact = contactProp ?? site?.contact ?? contactDetails;
   const social = socialProp ?? site?.social ?? socialLinks;
@@ -110,6 +112,13 @@ export default function Footer({
                 </Link>
               </li>
             ))}
+            {consent && (
+              <li>
+                <button type="button" onClick={consent.openSettings} className={linkClasses}>
+                  Cookie settings
+                </button>
+              </li>
+            )}
             <li>
               <Link to={PATHS.login} className={linkClasses}>
                 Sign in
