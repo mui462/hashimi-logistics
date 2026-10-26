@@ -20,6 +20,7 @@
     "worker": "node scripts/run-worker.js"
   },
   "dependencies": {
+    "@vercel/functions": "^3.10.3",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

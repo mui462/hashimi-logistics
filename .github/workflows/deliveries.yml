@@ -1,0 +1,27 @@
+# Free scheduler for the email/SMS delivery queue (the site runs on Vercel, which has no always-on worker).
+# Every 5 minutes it calls the secret-protected runner endpoint, which sends whatever is due and returns.
+# Repository secrets needed (Settings > Secrets and variables > Actions):
+#   APP_URL      e.g. https://www.yourdomain.com   (no trailing slash)
+#   CRON_SECRET  the same value as the CRON_SECRET environment variable on Vercel
+# GitHub may delay scheduled runs by a few minutes, and pauses them after 60 days without repository activity
+# (re-enable under the Actions tab). Time-critical mail (password reset, verification, new notifications) is also
+# sent right after the request by the API itself, so this schedule mainly handles retries and anything missed.
+name: Run delivery queue
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Call the delivery runner
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          test -n "$APP_URL" && test -n "$CRON_SECRET" || { echo "APP_URL and CRON_SECRET secrets are required"; exit 1; }
+          curl --fail-with-body --silent --show-error --max-time 60 -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$APP_URL/api/v1/internal/deliveries/run"

@@ -216,3 +216,13 @@ changes an API answer; queue errors are logged and swallowed like the audit log.
 * Carrier application and payment events do not send notifications because the workflows do not produce them yet.
 * The worker must be deployed and monitored; if it is down, messages wait (visible as `QUEUED` in the log).
 * Business emails go only to verified addresses.
+
+## Running the queue on Vercel (no always-on worker)
+
+Vercel functions are not long-running, so `npm run worker` cannot run there. Three things cover it:
+
+1. **Right after the request.** When a request queues an e-mail/SMS row, the API asks Vercel to keep the function alive after the response (`backend/src/utils/background.js`, `waitUntil`) and sends due rows then. The visitor never waits. This is a no-op outside Vercel and in tests.
+2. **A free scheduler.** `.github/workflows/deliveries.yml` (GitHub Actions, every 5 minutes) or any free cron service (for example cron-job.org) calls `POST /api/v1/internal/deliveries/run` with `Authorization: Bearer <CRON_SECRET>`. This handles retries with backoff and anything missed.
+3. **Vercel Cron** (`vercel.json`, once a day, the Hobby limit) as a last backstop; Vercel sends the `CRON_SECRET` itself.
+
+The runner uses the same atomic claim rules as the worker, so overlapping calls never send a row twice. Without `CRON_SECRET` the endpoint answers 404. It returns counts only. On a server that does keep a process running, `npm run worker` still works unchanged. See `docs/VERCEL_ENV_VARIABLES.md` for the variables.

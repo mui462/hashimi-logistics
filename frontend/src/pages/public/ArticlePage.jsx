@@ -13,6 +13,7 @@ import SectionShell from '../../components/sections/SectionShell';
 import { PATHS } from '../../config/paths';
 import { useAsyncData } from '../../hooks/useAsyncData';
 import { getArticle } from '../../services/blogService';
+import { ArticleJsonLd } from '../../components/seo/JsonLd';
 import NotFoundPage from './NotFoundPage';
 import { finalCta } from '../../content/home';
 
@@ -49,6 +50,7 @@ export default function ArticlePage() {
   return (
     <>
       <Seo title={article.title} description={article.excerpt} image={article.featuredImage ?? undefined} path={`${PATHS.resources}/${article.slug}`} type="article" seo={article.seo} />
+      <ArticleJsonLd article={article} path={`${PATHS.resources}/${article.slug}`} />
       <HeroSection eyebrow={article.category} title={article.title} description={[article.author, article.publishedAt && new Date(article.publishedAt).toLocaleDateString()].filter(Boolean).join(' · ')} scene="warehouse" breadcrumbs={[{ label: 'Home', to: PATHS.home }, { label: 'Resources', to: PATHS.resources }, { label: article.title }]} />
       <SectionShell id="article" labelledBy="article-title">
         <article className="mx-auto max-w-3xl">

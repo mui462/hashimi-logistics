@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Outlet } from 'react-router-dom';
+import { SiteJsonLd } from '../components/seo/JsonLd';
 import SkipLink from '../components/common/SkipLink';
 import Footer from '../components/layout/Footer';
 import Navbar from '../components/layout/Navbar';
@@ -23,6 +24,7 @@ export default function PublicLayout() {
   return (
     <SiteContentProvider>
       <ThemedSite>
+        <SiteJsonLd />
         <SkipLink />
         <Navbar />
         <main id="main-content" className="flex-1">
