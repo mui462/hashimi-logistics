@@ -2,11 +2,8 @@ import { Suspense, lazy } from 'react';
 import { Outlet } from 'react-router-dom';
 import { SiteJsonLd } from '../components/seo/JsonLd';
 import SkipLink from '../components/common/SkipLink';
-import AnalyticsLoader from '../components/consent/AnalyticsLoader';
-import CookieBanner from '../components/consent/CookieBanner';
 import Footer from '../components/layout/Footer';
 import Navbar from '../components/layout/Navbar';
-import { ConsentProvider } from '../context/ConsentContext';
 import { SiteContentProvider, useSiteContent } from '../context/SiteContentContext';
 import { themeCssVars } from '../config/themeAppearance';
 
@@ -26,7 +23,6 @@ function ThemedSite({ children }) {
 export default function PublicLayout() {
   return (
     <SiteContentProvider>
-      <ConsentProvider>
       <ThemedSite>
         <SiteJsonLd />
         <SkipLink />
@@ -38,10 +34,7 @@ export default function PublicLayout() {
         <Suspense fallback={null}>
           <ChatWidget />
         </Suspense>
-        <CookieBanner />
-        <AnalyticsLoader />
       </ThemedSite>
-      </ConsentProvider>
     </SiteContentProvider>
   );
 }

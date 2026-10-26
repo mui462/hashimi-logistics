@@ -11,7 +11,7 @@ import { createServer } from 'vite';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const dom = new JSDOM('<!doctype html><html><head></head><body><div id="root"></div></body></html>', { url: 'http://localhost:5173/', pretendToBeVisual: true });
-for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'Node', 'Event', 'KeyboardEvent', 'MouseEvent', 'localStorage', 'location']) {
+for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'Node', 'Event', 'KeyboardEvent', 'MouseEvent', 'localStorage', 'sessionStorage', 'location']) {
   try {
     globalThis[key] = dom.window[key];
   } catch {
@@ -37,6 +37,8 @@ describe('cookie consent', () => {
   let useConsent;
   let CookieBanner;
   let AnalyticsLoader;
+  let apiClient;
+  let ApiRequestError;
   const realStorage = dom.window.localStorage;
 
   before(async () => {
@@ -45,6 +47,8 @@ describe('cookie consent', () => {
     ({ ConsentProvider: Provider, useConsent } = await vite.ssrLoadModule('/src/context/ConsentContext.jsx'));
     ({ default: CookieBanner } = await vite.ssrLoadModule('/src/components/consent/CookieBanner.jsx'));
     ({ default: AnalyticsLoader } = await vite.ssrLoadModule('/src/components/consent/AnalyticsLoader.jsx'));
+    ({ apiClient } = await vite.ssrLoadModule('/src/services/apiClient.js'));
+    ({ ApiRequestError } = await vite.ssrLoadModule('/src/utils/apiRequestError.js'));
   });
   after(async () => { await vite.close(); });
 
@@ -52,6 +56,7 @@ describe('cookie consent', () => {
     Object.defineProperty(globalThis, 'localStorage', { value: realStorage, configurable: true });
     delete dom.window.navigator.globalPrivacyControl;
     realStorage.clear();
+    dom.window.sessionStorage.clear();
     store.clearConsent();
     document.body.innerHTML = '<div id="root"></div>';
     document.head.innerHTML = '';
@@ -139,16 +144,19 @@ describe('cookie consent', () => {
     test('is shown to a first-time visitor with reject and accept given equal weight', async () => {
       const view = await mount(h(CookieBanner));
       assert.ok(dialog(), 'the banner is shown');
-      assert.ok(button('Reject non-essential') && button('Accept all') && button('Customize'));
-      assert.equal(button('Reject non-essential').className, button('Accept all').className, 'same visual weight');
+      assert.ok(button('Reject all') && button('Accept all') && button('Customize'));
+      for (const token of ['min-h-11', 'px-5', 'flex-1', 'rounded-full', 'font-bold']) {
+        assert.ok(button('Reject all').className.includes(token) && button('Accept all').className.includes(token), `reject and accept share "${token}"`);
+      }
+      assert.ok(!dialog().className.includes('inset-0') && !dialog().className.includes('w-full'), 'a corner card, not a full-screen overlay');
       assert.ok(document.querySelector('a[href="/privacy-policy"]'), 'links to the privacy policy');
       assert.equal(store.getConsentSnapshot().status, 'unset', 'showing it saves nothing');
       await view.unmount();
     });
 
-    test('Reject non-essential saves "no" and closes the banner', async () => {
+    test('Reject all saves "no" and closes the banner', async () => {
       const view = await mount(h(CookieBanner));
-      await click(button('Reject non-essential'));
+      await click(button('Reject all'));
       assert.equal(dialog(), null);
       assert.deepEqual(JSON.parse(realStorage.getItem(KEY)).choices, { analytics: false, marketing: false });
       await view.unmount();
@@ -188,6 +196,100 @@ describe('cookie consent', () => {
       await act(async () => root.render(h(RR.MemoryRouter, null, h(CookieBanner))));
       assert.equal(dialog(), null);
       await act(() => root.unmount());
+    });
+
+    const closeButton = () => document.querySelector('button[aria-label="Close cookie banner"]');
+
+    test('the X closes the banner without choosing: nothing is saved and optional cookies stay off', async () => {
+      const view = await mount(h(CookieBanner));
+      assert.ok(closeButton(), 'there is a close button');
+      await click(closeButton());
+      assert.equal(dialog(), null);
+      assert.equal(realStorage.getItem(KEY), null, 'no choice was recorded');
+      assert.equal(store.getConsentSnapshot().status, 'unset');
+      assert.equal(store.hasConsent('analytics'), false);
+      assert.equal(dom.window.sessionStorage.getItem('hashimi_cookie_banner_dismissed'), '1', 'remembered for this session only');
+      await view.unmount();
+    });
+
+    test('a closed banner stays away, then comes back asking for a choice when the visitor does something that uses cookies', async () => {
+      const view = await mount(h(CookieBanner));
+      await click(closeButton());
+      assert.equal(dialog(), null);
+      let outcome;
+      await act(async () => { store.ensureConsentChoice().then((value) => { outcome = value; }); });
+      assert.ok(dialog(), 'the banner is back');
+      assert.match(document.querySelector('[role="status"]').textContent, /choose an option to continue/i);
+      assert.equal(outcome, undefined, 'the action is waiting');
+      await click(button('Accept all'));
+      assert.equal(outcome, true, 'the action goes ahead once they choose');
+      assert.equal(dialog(), null);
+      await view.unmount();
+    });
+
+    test('closing the banner again while an action waits cancels that action and saves nothing', async () => {
+      const view = await mount(h(CookieBanner));
+      await click(closeButton());
+      let outcome;
+      await act(async () => { store.ensureConsentChoice().then((value) => { outcome = value; }); });
+      await click(closeButton());
+      assert.equal(outcome, false);
+      assert.equal(dialog(), null);
+      assert.equal(realStorage.getItem(KEY), null);
+      await view.unmount();
+    });
+
+    test('nothing waits when the visitor has already chosen, when Global Privacy Control answered, or when no banner is on the page', async () => {
+      assert.equal(await store.ensureConsentChoice(), true, 'no banner mounted: never hold an action up');
+      const view = await mount(h(CookieBanner));
+      store.rejectAll();
+      assert.equal(await store.ensureConsentChoice(), true, 'already chosen');
+      store.clearConsent();
+      Object.defineProperty(dom.window.navigator, 'globalPrivacyControl', { value: true, configurable: true });
+      store.clearConsent();
+      assert.equal(await store.ensureConsentChoice(), true, 'Global Privacy Control');
+      await view.unmount();
+    });
+
+    test('API calls that change data wait for the choice; reads, signing out and the assistant never do', async () => {
+      const seen = [];
+      apiClient.defaults.adapter = async (config) => { seen.push(`${config.method} ${config.url}`); return { data: { success: true, data: {} }, status: 200, statusText: 'OK', headers: {}, config }; };
+      const view = await mount(h(CookieBanner));
+      await click(closeButton()); // dismissed, so the next write must bring it back
+
+      await apiClient.get('/content/homepage');
+      await apiClient.post('/auth/logout');
+      await apiClient.post('/chatbot/messages', { messages: [] });
+      assert.deepEqual(seen, ['get /content/homepage', 'post /auth/logout', 'post /chatbot/messages']);
+      assert.equal(dialog(), null, 'none of those asked');
+
+      seen.length = 0;
+      let login;
+      await act(async () => { login = apiClient.post('/auth/login', {}); });
+      assert.ok(dialog(), 'signing in brings the banner back');
+      assert.deepEqual(seen, [], 'the request has not been sent');
+      await click(button('Reject all'));
+      await login;
+      assert.deepEqual(seen, ['post /auth/login'], 'sent once they chose');
+      assert.equal(store.hasConsent('analytics'), false, 'rejecting still lets them sign in');
+
+      // Once chosen, nothing is asked again.
+      await apiClient.post('/quotes', {});
+      assert.equal(dialog(), null);
+      await view.unmount();
+    });
+
+    test('closing the banner on a waiting sign-in cancels it with a clear message', async () => {
+      apiClient.defaults.adapter = async (config) => ({ data: {}, status: 200, statusText: 'OK', headers: {}, config });
+      const view = await mount(h(CookieBanner));
+      await click(closeButton());
+      let failure;
+      await act(async () => { apiClient.post('/auth/register', {}).catch((error) => { failure = error; }); });
+      await click(closeButton());
+      assert.ok(failure instanceof ApiRequestError);
+      assert.equal(failure.code, 'COOKIE_CHOICE_REQUIRED');
+      assert.match(failure.message, /choose a cookie option/i);
+      await view.unmount();
     });
 
     test('Cookie settings reopens it with the current choices; Escape closes it without changing anything', async () => {
