@@ -23,6 +23,61 @@ function headers() {
   return { 'Content-Type': 'application/json', Accept: 'application/json', ...(env.OLLAMA_API_KEY ? { Authorization: `Bearer ${env.OLLAMA_API_KEY}` } : {}) };
 }
 
+/** One answer from Claude (Anthropic Messages API) with a hard timeout. Returns the same shape as askOllama. */
+async function askClaude(system, history) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), env.ANTHROPIC_TIMEOUT_MS);
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: env.ANTHROPIC_MODEL, max_tokens: env.OLLAMA_MAX_TOKENS, system, messages: history }),
+      signal: controller.signal,
+      redirect: 'error',
+    });
+    const json = await response.json().catch(() => null);
+    const content = json?.content?.find((block) => block.type === 'text')?.text;
+    return { ok: response.ok, status: response.status, content, promptTokens: json?.usage?.input_tokens, generated: json?.usage?.output_tokens };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** One answer from any OpenAI-compatible chat API (Groq, Google Gemini, OpenRouter, ...). Same shape as askOllama. */
+async function askOpenAi(system, history) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), env.CHAT_API_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${env.CHAT_API_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.CHAT_API_KEY}` },
+      body: JSON.stringify({ model: env.CHAT_API_MODEL, max_tokens: env.OLLAMA_MAX_TOKENS, temperature: env.OLLAMA_TEMPERATURE, messages: [{ role: 'system', content: system }, ...history] }),
+      signal: controller.signal,
+      redirect: 'error',
+    });
+    const json = await response.json().catch(() => null);
+    return { ok: response.ok, status: response.status, content: json?.choices?.[0]?.message?.content, promptTokens: json?.usage?.prompt_tokens, generated: json?.usage?.completion_tokens };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** One answer from Ollama, in the shape shared with askClaude. */
+async function askOllama(system, history) {
+  const response = await callOllama('/api/chat', {
+    method: 'POST',
+    timeoutMs: env.OLLAMA_TIMEOUT_MS,
+    body: {
+      model: env.OLLAMA_MODEL,
+      stream: false,
+      keep_alive: /^d+$/.test(env.OLLAMA_KEEP_ALIVE) ? Number(env.OLLAMA_KEEP_ALIVE) : env.OLLAMA_KEEP_ALIVE,
+      options: { temperature: env.OLLAMA_TEMPERATURE, num_ctx: env.OLLAMA_NUM_CTX, num_predict: env.OLLAMA_MAX_TOKENS },
+      messages: [{ role: 'system', content: system }, ...history],
+    },
+  });
+  return { ok: response.ok, status: response.status, content: response.json?.message?.content, promptTokens: response.json?.prompt_eval_count, generated: response.json?.eval_count };
+}
+
 /** One call to Ollama with a hard timeout. Throws the raw failure; callers turn it into a safe, fixed message. */
 async function callOllama(path, { method = 'GET', body, timeoutMs }) {
   const controller = new AbortController();
@@ -48,6 +103,9 @@ export const clearAvailabilityCache = () => { statusCache = { at: 0, value: null
  * assumed) and remembered for a few seconds. `reason` is for the server log and the setup check only; visitors only ever see a boolean.
  */
 export async function checkAvailability({ fresh = false } = {}) {
+  // Claude has no machine to probe (and a probe would cost money): it is available when its key is configured.
+  if (env.CHATBOT_PROVIDER === 'openai') return env.CHAT_API_KEY ? { available: true, reason: null } : { available: false, reason: 'no_api_key' };
+  if (env.CHATBOT_PROVIDER === 'claude') return env.ANTHROPIC_API_KEY ? { available: true, reason: null } : { available: false, reason: 'no_api_key' };
   if (!fresh && statusCache.value && Date.now() - statusCache.at < 10_000) return statusCache.value;
   let value;
   try {
@@ -64,6 +122,14 @@ export async function checkAvailability({ fresh = false } = {}) {
 
 /** What went wrong, for the operator's log. Never contains visitor text, and only a fixed phrase from Ollama's reply. */
 function describeFailure(error, response) {
+  if (env.CHATBOT_PROVIDER === 'openai') {
+    if (response) return `chat API answered HTTP ${response.status}${response.status === 401 || response.status === 403 ? ' (check CHAT_API_KEY)' : ''}`;
+    return `request to the chat API failed (${error?.cause?.code ?? error?.name ?? 'Error'})`;
+  }
+  if (env.CHATBOT_PROVIDER === 'claude') {
+    if (response) return `Anthropic API answered HTTP ${response.status}${response.status === 401 ? ' (check ANTHROPIC_API_KEY)' : ''}`;
+    return `request to the Anthropic API failed (${error?.cause?.code ?? error?.name ?? 'Error'})`;
+  }
   if (response) return response.status === 404 ? `model "${env.OLLAMA_MODEL}" is not installed (run: ollama pull ${env.OLLAMA_MODEL})` : `Ollama answered HTTP ${response.status}`;
   const code = error?.cause?.code ?? error?.code;
   return code ? `could not reach Ollama (${code})` : `request to Ollama failed (${error?.name ?? 'Error'})`;
@@ -121,25 +187,16 @@ export async function reply(messages) {
   try {
     const { knowledge, chunks } = await knowledgeFor(recentVisitorText(messages), env.CHATBOT_CONTEXT_CHUNKS);
     const startedAt = Date.now();
+    const system = buildSystemMessage({ routes: knowledge.routes, chunks, company: knowledge.company });
+    const history = fitHistory(messages).map(({ role, content }) => ({ role, content }));
+    const engine = { claude: 'Claude', openai: 'The chat API', ollama: 'Ollama' }[env.CHATBOT_PROVIDER];
+    const ask = { claude: askClaude, openai: askOpenAi, ollama: askOllama }[env.CHATBOT_PROVIDER];
     let response;
     try {
-      response = await callOllama('/api/chat', {
-        method: 'POST',
-        timeoutMs: env.OLLAMA_TIMEOUT_MS,
-        body: {
-          model: env.OLLAMA_MODEL,
-          stream: false,
-          keep_alive: /^\d+$/.test(env.OLLAMA_KEEP_ALIVE) ? Number(env.OLLAMA_KEEP_ALIVE) : env.OLLAMA_KEEP_ALIVE,
-          options: { temperature: env.OLLAMA_TEMPERATURE, num_ctx: env.OLLAMA_NUM_CTX, num_predict: env.OLLAMA_MAX_TOKENS },
-          messages: [
-            { role: 'system', content: buildSystemMessage({ routes: knowledge.routes, chunks, company: knowledge.company }) },
-            ...fitHistory(messages).map(({ role, content }) => ({ role, content })),
-          ],
-        },
-      });
+      response = await ask(system, history);
     } catch (error) {
       if (error?.name === 'AbortError') {
-        logger.warn(`Chatbot: Ollama did not answer within ${env.OLLAMA_TIMEOUT_MS} ms.`);
+        logger.warn(`Chatbot: ${engine} did not answer in time.`);
         throw new ApiError(504, TIMED_OUT, [], 'CHATBOT_TIMEOUT');
       }
       logger.error(`Chatbot: ${describeFailure(error)}.`);
@@ -147,7 +204,12 @@ export async function reply(messages) {
       throw unavailable();
     }
 
-    const content = response.json?.message?.content;
+    // Free plans of hosted engines have request limits: say "busy" rather than "broken".
+    if (response.status === 429) {
+      logger.warn(`Chatbot: ${engine} rate limit reached.`);
+      throw new ApiError(503, BUSY, [], 'CHATBOT_BUSY');
+    }
+    const content = response.content;
     if (!response.ok || typeof content !== 'string') {
       logger.error(`Chatbot: ${describeFailure(null, response)}${response.ok ? ' (unexpected response shape)' : ''}.`);
       clearAvailabilityCache();
@@ -159,7 +221,7 @@ export async function reply(messages) {
       throw unavailable();
     }
     // Timing and counts only. Never the visitor's words or the answer.
-    logger.info(`Chatbot: answered in ${Date.now() - startedAt} ms (${response.json.prompt_eval_count ?? '?'} prompt tokens, ${response.json.eval_count ?? '?'} generated).`);
+    logger.info(`Chatbot: answered in ${Date.now() - startedAt} ms (${response.promptTokens ?? '?'} prompt tokens, ${response.generated ?? '?'} generated).`);
     return { reply: text, links: linksIn(text, knowledge.routes) };
   } finally {
     pending -= 1;

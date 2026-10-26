@@ -9,6 +9,7 @@ import { User } from '../models/User.js';
 import { ACCOUNT_TYPES } from '../utils/constants.js';
 import { ApiError } from '../utils/ApiError.js';
 import { logger } from '../utils/logger.js';
+import { runAfterResponse } from '../utils/background.js';
 import { pagination, skipFor } from '../operations/common.js';
 import { normalizePhone } from './phone.js';
 import { ProviderError, sanitizeError } from './providers/ProviderError.js';
@@ -86,6 +87,7 @@ export async function enqueueForNotification({ notification, eventKey }) {
     if (getSmsProvider() && allowsChannel(user, 'SMS', notification.type) && (await resolvePhone(user))) {
       rows.push(await insertOnce({ ...base, channel: 'SMS', templateKey: 'sms', status: 'QUEUED', nextAttemptAt: new Date(), idempotencyKey: deliveryKey(key, user._id, 'SMS') }));
     }
+    if (rows.length > 1) runAfterResponse(() => processDueDeliveries());
     return rows.filter(Boolean);
   } catch (error) {
     logger.warn(`Could not queue deliveries for a notification: ${error.message}`);
@@ -114,6 +116,7 @@ export async function queueSecurityEmail({ user, kind, link, tokenFingerprint, e
     securePayload: seal({ link, expiresAt: expiresAt.toISOString() }),
     idempotencyKey: `auth:${kind}:${user._id}:${sha(tokenFingerprint).slice(0, 24)}`,
   });
+  if (row) runAfterResponse(() => processDueDeliveries());
   return { queued: Boolean(row) };
 }
 

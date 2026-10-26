@@ -76,6 +76,9 @@ const envSchema = z.object({
   DELIVERY_WORKER_POLL_SECONDS: positiveInt(10, { min: 1, max: 600 }),
   DELIVERY_BATCH_SIZE: positiveInt(20, { min: 1, max: 200 }),
   DELIVERY_LOCK_SECONDS: positiveInt(120, { min: 10, max: 3600 }),
+  // Secret for POST/GET /api/v1/internal/deliveries/run, the scheduler-driven delivery runner for hosts without a long-running
+  // worker (Vercel). Leave unset to disable that endpoint. Use a long random value (also set it in the scheduler).
+  CRON_SECRET: z.string().trim().min(32, 'must be at least 32 characters').optional(),
   NOTIFICATION_RATE_LIMIT_MAX: positiveInt(60),
   FINANCE_RATE_LIMIT_MAX: positiveInt(300),
   ENFORCE_HTTPS: z.enum(['true', 'false']).optional(),
@@ -87,6 +90,19 @@ const envSchema = z.object({
   PUBLIC_FORM_LIMIT_MAX: positiveInt(10),
   // Public tracking look-ups per client IP per 15 minutes. Tracking numbers are random; this keeps guessing impractical.
   TRACKING_LIMIT_MAX: positiveInt(30),
+
+  // Which engine answers the chatbot: 'ollama' (a model on a machine you control) or 'claude' (Anthropic's API, no server to run;
+  // needs ANTHROPIC_API_KEY, which stays on this server). The answer length cap is shared with Ollama (OLLAMA_MAX_TOKENS).
+  // 'openai' means any OpenAI-compatible chat API, which includes the free tiers of Groq, Google Gemini and OpenRouter
+  // (CHAT_API_BASE_URL, CHAT_API_KEY, CHAT_API_MODEL; the key stays on this server).
+  CHATBOT_PROVIDER: z.enum(['ollama', 'claude', 'openai']).default('ollama'),
+  CHAT_API_BASE_URL: z.string().trim().url('must be an https URL such as https://api.groq.com/openai/v1').refine((v) => v.startsWith('https://'), 'must start with https://').transform((v) => v.replace(/\/+$/, '')).optional(),
+  CHAT_API_KEY: z.string().trim().min(8).optional(),
+  CHAT_API_MODEL: z.string().trim().min(1).max(100).optional(),
+  CHAT_API_TIMEOUT_MS: positiveInt(30000, { min: 3000, max: 120000 }),
+  ANTHROPIC_API_KEY: z.string().trim().min(20).optional(),
+  ANTHROPIC_MODEL: z.string().trim().min(1).max(100).default('claude-haiku-5-5'),
+  ANTHROPIC_TIMEOUT_MS: positiveInt(30000, { min: 3000, max: 120000 }),
 
   // AI assistant (public website chatbot), answered by Ollama running on a machine the backend can reach (see docs/AI_ASSISTANT.md).
   // The browser never talks to Ollama: only this server does. OLLAMA_API_KEY is optional and is sent as a Bearer token to an
@@ -141,7 +157,15 @@ function checkCrossFieldRules(config, context) {
       if (!config[key]) context.addIssue({ code: 'custom', path: [key], message: 'Required when SMS_PROVIDER=twilio.' });
     }
   }
-  if (config.NODE_ENV === 'production' && config.OLLAMA_BASE_URL) {
+  if (config.CHATBOT_PROVIDER === 'claude' && !config.ANTHROPIC_API_KEY) {
+    context.addIssue({ code: 'custom', path: ['ANTHROPIC_API_KEY'], message: 'Required when CHATBOT_PROVIDER=claude.' });
+  }
+  if (config.CHATBOT_PROVIDER === 'openai') {
+    for (const key of ['CHAT_API_BASE_URL', 'CHAT_API_KEY', 'CHAT_API_MODEL']) {
+      if (!config[key]) context.addIssue({ code: 'custom', path: [key], message: 'Required when CHATBOT_PROVIDER=openai.' });
+    }
+  }
+  if (config.NODE_ENV === 'production' && config.CHATBOT_PROVIDER === 'ollama' && config.OLLAMA_BASE_URL) {
     const url = new URL(config.OLLAMA_BASE_URL);
     const privateHost = /^(localhost|127\.\d+\.\d+\.\d+|\[::1\]|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(url.hostname);
     if (url.protocol === 'http:' && !privateHost) {

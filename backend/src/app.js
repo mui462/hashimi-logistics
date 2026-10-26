@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { globalLimiter } from './middleware/rateLimiters.js';
 import { requireTrustedOrigin } from './middleware/trustedOrigin.js';
+import sitemapRoutes from './cms/sitemap.routes.js';
 import apiRoutes from './routes/index.js';
 
 export const API_BASE_PATH = '/api/v1';
@@ -50,6 +51,8 @@ const defaultJson = express.json({ limit: '10kb' });
 app.use((req, res, next) => (req.path.startsWith(`${API_BASE_PATH}/admin/cms`) ? next() : defaultJson(req, res, next)));
 app.use(cookieParser());
 
+// Crawler files for the public website (reached at the site root through the host's rewrite).
+app.use(sitemapRoutes);
 app.use(API_BASE_PATH, requireTrustedOrigin, apiRoutes);
 
 app.use(notFoundHandler);

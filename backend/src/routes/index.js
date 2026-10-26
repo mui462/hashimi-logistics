@@ -15,6 +15,7 @@ import contentRoutes from '../cms/content.routes.js';
 import operationsRoutes from '../operations/operations.routes.js';
 import financeRoutes from '../finance/finance.routes.js';
 import chatbotRoutes from '../chatbot/chatbot.routes.js';
+import cronRoutes from '../notifications/cron.routes.js';
 import authRoutes from './auth.routes.js';
 import storageRoutes from './storage.routes.js';
 import { createPlaceholderRouter } from './placeholder.routes.js';
@@ -54,6 +55,8 @@ const router = Router();
 router.get('/health', getHealth);
 router.get('/health/ready', getReadiness);
 router.use('/auth', authRoutes);
+// Scheduler-driven delivery runner (needs CRON_SECRET; absent otherwise).
+router.use('/internal', cronRoutes);
 // Phase 10: file delivery for the development-only local storage provider (inert unless STORAGE_PROVIDER=local).
 router.use('/storage/local', storageRoutes);
 // Customer portal API (Phase 5): customers only, always scoped to the signed-in customer's own records.

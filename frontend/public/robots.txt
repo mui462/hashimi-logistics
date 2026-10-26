@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin/
-Disallow: /customer/
-Disallow: /carrier/
-Disallow: /login
-Disallow: /register

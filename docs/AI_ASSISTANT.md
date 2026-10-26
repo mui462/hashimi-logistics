@@ -8,7 +8,29 @@ Website chat widget  →  Express backend (POST /api/v1/chatbot/messages)  →  
 
 The browser never talks to Ollama. Only the backend does.
 
-## Set it up on Windows (development)
+## Choosing the engine: Ollama or Claude
+
+`CHATBOT_PROVIDER` selects who writes the answers.
+
+| | `ollama` (default) | `claude` |
+|---|---|---|
+| Runs on | a machine you host (needed for a live site; see below) | Anthropic's API, nothing to host. Works from Vercel. |
+| Needs | Ollama + a model | `ANTHROPIC_API_KEY` (server only, never sent to the browser) |
+| Cost | your hardware | pay per answer; the per-IP limits below cap abuse |
+
+**Free option for a live site:** `CHATBOT_PROVIDER=openai` talks to any OpenAI-compatible API, including the free tiers of Groq, Google Gemini and OpenRouter. Set `CHAT_API_BASE_URL`, `CHAT_API_KEY` and `CHAT_API_MODEL`, for example:
+
+| Service | `CHAT_API_BASE_URL` |
+|---|---|
+| Groq | `https://api.groq.com/openai/v1` |
+| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/openai` |
+| OpenRouter (models ending `:free`) | `https://openrouter.ai/api/v1` |
+
+Free plans have request limits that the provider can change at any time. When the provider answers 429 the visitor sees the polite "busy" message, and the per-IP limits below keep one visitor from using the whole allowance. Check the provider's current free limits before launch.
+
+To use the paid Claude API instead: set `CHATBOT_PROVIDER=claude`, `ANTHROPIC_API_KEY`, and optionally `ANTHROPIC_MODEL` (default `claude-haiku-5-5`, fast and low cost) and `ANTHROPIC_TIMEOUT_MS` (default 30000). The answer length cap is shared (`OLLAMA_MAX_TOKENS`). The same rulebook, website facts, guards, rate limits and daily limit apply to both engines. `GET /chatbot/status` reports available when the key is set (it does not call the API). Start-up fails if `CHATBOT_PROVIDER=claude` has no key.
+
+## Set it up on Windows (development, Ollama)
 
 1. **Install Ollama** from <https://ollama.com/download> (or run the downloaded `OllamaSetup.exe`). Check it:
 
