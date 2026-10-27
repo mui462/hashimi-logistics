@@ -44,6 +44,8 @@ const routes = [
   { path: '/resources', title: 'Resources', description: `Freight, transportation and cross-border articles and updates from ${brand.name}` },
   { path: '/track-shipment', title: 'Track Shipment', description: `Track your ${brand.name} shipment with your tracking number.` },
   { path: '/faq', title: 'Frequently Asked Questions', description: `Answers about shipping, carriers, quotes, tracking and cross-border freight with ${brand.name}` },
+  { path: '/privacy-policy', title: 'Privacy Policy', description: `How ${brand.name} collects, uses and shares information.` },
+  { path: '/terms', title: 'Terms and Conditions', description: `Terms and conditions for using the ${brand.name} website.` },
   { path: '/contact', title: 'Contact Us', description: `Contact ${brand.name} about shipping, carrier opportunities or general questions.` },
   ...services.map((s) => ({ path: `/services/${s.slug}`, title: s.title, description: s.short })),
   ...industries.map((i) => ({ path: `/industries/${i.slug}`, title: `${i.title} Freight`, description: i.short })),
