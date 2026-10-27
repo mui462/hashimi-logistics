@@ -75,7 +75,7 @@ export function buildKnowledge({ brand, contactDetails, PATHS, services, industr
     contactBits.length > 0 ? contactBits.join('. ') : 'No phone number, email address or street address is published in the built-in website content.',
     'The Contact page has a form for sending the team a message.');
   add('legal', 'Privacy Policy and Terms', PATHS.privacy,
-    'The Privacy Policy and Terms and Conditions pages are placeholder structures that have not been finalised. Their legal text is not available.');
+    'The Privacy Policy and Terms and Conditions are published on their own pages. Point visitors to those pages for the legal text and do not summarise or interpret them.');
 
   const routes = [
     ['Home', PATHS.home], ['About', PATHS.about], ['Services', PATHS.services], ['Industries', PATHS.industries],
