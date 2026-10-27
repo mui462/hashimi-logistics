@@ -53,7 +53,7 @@ export default function ResourcesPage() {
 
   return (
     <>
-      <Seo title="Resources" description={`Freight, transportation and cross-border articles and updates from ${brand.name}`} path={PATHS.resources} seo={cms?.seo} />
+      <Seo title="Resources" description={`Freight, transportation and cross-border articles and updates from ${brand.name}.`} path={PATHS.resources} seo={cms?.seo} />
       <HeroSection eyebrow="Resources" title="Freight Resources" description="Articles and updates on freight, transportation and cross-border shipping." scene="warehouse" cms={cms} />
       <CmsPageContent page={cms} />
       <SectionShell id="articles" labelledBy="articles-heading">

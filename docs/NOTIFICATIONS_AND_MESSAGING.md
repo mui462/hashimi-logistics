@@ -102,7 +102,7 @@ Only the variables of the *selected* provider are needed. None are required for 
 | Variable | Needed when | Notes |
 | --- | --- | --- |
 | `EMAIL_PROVIDER` | optional | `resend` or `mock`. Empty: no email is sent and the API says so. `mock` is refused when `NODE_ENV=production`. |
-| `EMAIL_FROM` | `resend` | Verified sender, e.g. `HASHIMI LOGISTICS INC. <notices@your-domain>` |
+| `EMAIL_FROM` | `resend` | Verified sender, e.g. `HASHIMI LOGISTICS LLC <notices@your-domain>` |
 | `RESEND_API_KEY` | `resend` | Secret. Never returned, logged, or shown. |
 | `EMAIL_REPLY_TO` | optional | |
 | `SMS_PROVIDER` | optional | `twilio` or `mock` (mock refused in production). SMS is never required. |
@@ -137,7 +137,7 @@ and the provider variables. The API only needs the provider variables to know wh
 ## Templates
 
 `notifications/templates.js`. Branded text + HTML with the company name (`SiteSettings.companyName`, default
-`HASHIMI LOGISTICS INC.`). Every dynamic value is HTML-escaped, there is no user-supplied HTML, and links are built only
+`HASHIMI LOGISTICS LLC`). Every dynamic value is HTML-escaped, there is no user-supplied HTML, and links are built only
 from `CLIENT_URL` plus a fixed portal path. No phone number, address, MC/DOT number, certification, statistic or guarantee is
 invented; nothing marketing is sent.
 

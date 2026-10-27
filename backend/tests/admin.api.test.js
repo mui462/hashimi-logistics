@@ -416,7 +416,7 @@ describe('super admin read API', { skip: skipReason }, () => {
     });
 
     test('presents saved settings through an allow-list', async () => {
-      await M.SiteSettings.create({ key: 'primary', companyName: 'HASHIMI LOGISTICS INC.', email: 'hello@example.com', timezone: 'America/Chicago' });
+      await M.SiteSettings.create({ key: 'primary', companyName: 'HASHIMI LOGISTICS LLC', email: 'hello@example.com', timezone: 'America/Chicago' });
       const data = ok(await adm('/settings'));
       assert.equal(data.configured, true);
       assert.equal(data.settings.email, 'hello@example.com');

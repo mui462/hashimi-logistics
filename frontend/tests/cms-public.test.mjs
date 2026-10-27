@@ -35,7 +35,7 @@ describe('Phase 9 public website and the CMS', () => {
   describe('fallbacks', () => {
     test('with nothing in the CMS the homepage is the built-in Phase 4 homepage', async () => {
       const view = await visit('/');
-      assert.equal(h.h1(), 'HASHIMI LOGISTICS INC.');
+      assert.equal(h.h1(), 'HASHIMI LOGISTICS LLC');
       for (const id of ['services', 'why-hashimi', 'how-it-works', 'industries', 'cross-border', 'service-areas', 'statistics', 'faq-preview', 'cta']) assert.ok(sectionIds().includes(id), id);
       assert.ok(!sectionIds().includes('testimonials'), 'no testimonials are invented');
       assert.match(h.text(), /Full Truckload/);
@@ -44,7 +44,7 @@ describe('Phase 9 public website and the CMS', () => {
 
     test('when the content API fails the site still renders its built-in content', async () => {
       const view = await visit('/', { 'GET /content/homepage': () => ({ status: 500, body: { message: 'Server error' } }), 'GET /content/site-settings': () => ({ status: 500, body: { message: 'Server error' } }) });
-      assert.equal(h.h1(), 'HASHIMI LOGISTICS INC.');
+      assert.equal(h.h1(), 'HASHIMI LOGISTICS LLC');
       assert.match(h.text(), /Full Truckload/);
       assert.doesNotMatch(document.body.textContent, /Server error|unavailable/);
       await view.unmount();
@@ -369,7 +369,7 @@ describe('Phase 9 public website and the CMS', () => {
       assert.equal(h.h1(), 'CMS Service');
       assert.match(h.text(), /A feature/);
       assert.match(h.text(), /Second paragraph\./);
-      assert.equal(document.title, 'CMS service SEO | HASHIMI LOGISTICS INC.');
+      assert.equal(document.title, 'CMS service SEO | HASHIMI LOGISTICS LLC');
       await view.unmount();
       view = await visit('/services/ltl', routes);
       assert.equal(h.h1(), 'Service not found');

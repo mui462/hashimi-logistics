@@ -41,7 +41,7 @@ export default function FaqPage({ items: itemsProp = faqs, categories: categorie
 
   return (
     <>
-      <Seo title="Frequently Asked Questions" description={`Answers about shipping, carriers, quotes, tracking and cross-border freight with ${brand.name}`} path={PATHS.faq} seo={cms?.seo} />
+      <Seo title="Frequently Asked Questions" description={`Answers about shipping, carriers, quotes, tracking and cross-border freight with ${brand.name}.`} path={PATHS.faq} seo={cms?.seo} />
       <HeroSection eyebrow="FAQ" title="Frequently Asked Questions" description="Search or browse answers for shippers and carriers." scene="highway" cms={cms} />
       <CmsPageContent page={cms} />
       <SectionShell id="faq" labelledBy="faq-heading">

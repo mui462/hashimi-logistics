@@ -17,7 +17,7 @@ export default function BecomeCarrierPage() {
   const { page: cms } = useCmsPage('become-a-carrier');
   return (
     <>
-      <Seo title="Become a Carrier" description={`Apply to haul freight with ${brand.name}`} path={PATHS.becomeCarrier} seo={cms?.seo} />
+      <Seo title="Become a Carrier" description={`Apply to haul freight with ${brand.name}.`} path={PATHS.becomeCarrier} seo={cms?.seo} />
       <HeroSection eyebrow="Carriers" title="Become a Carrier" description={`Apply to haul domestic and cross-border freight with ${brand.shortName}.`} scene="flatbed" actions={[{ label: 'Start Application', href: '#apply' }]} cms={cms} />
       <CmsPageContent page={cms} />
       <FeatureGrid id="why-partner" eyebrow="Why partner" title="Why Partner With Us" items={carrierSections.slice(0, 3)} tone="default" />

@@ -9,6 +9,6 @@ export const seoDefaults = {
   siteName: brand.name,
   siteUrl,
   ogImage,
-  description: `${brand.name} ${brand.tagline}. ${brand.supportingStatement}.`,
+  description: `${brand.name}. ${brand.tagline}. ${brand.supportingStatement}.`,
   robots: 'index,follow',
 };

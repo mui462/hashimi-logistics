@@ -152,7 +152,7 @@ describe('Phase 4 public website', () => {
         const ids = [...document.querySelectorAll('[id]')].map((e) => e.id);
         assert.equal(new Set(ids).size, ids.length, `${path}: duplicate ids ${ids.filter((x, i) => ids.indexOf(x) !== i)}`);
         assert.ok(document.querySelectorAll('main').length === 1, `${path}: one main landmark`);
-        assert.ok(document.title.includes('HASHIMI LOGISTICS INC.'), `${path}: title`);
+        assert.ok(document.title.includes('HASHIMI LOGISTICS LLC'), `${path}: title`);
         titles.add(document.title);
         assert.ok(document.head.querySelector('meta[name="description"]')?.content.length > 20, `${path}: description`);
         assert.ok(document.head.querySelector('meta[name="robots"]'), `${path}: robots`);
@@ -396,7 +396,7 @@ describe('Phase 4 public website', () => {
       assert.equal(document.querySelector('video'), null);
       assert.equal(document.querySelector('[data-testid="hero-media"]').dataset.videoState, 'none');
       assert.ok(document.querySelector('[data-hero="home"] svg'));
-      assert.equal(document.querySelector('h1').textContent, 'HASHIMI LOGISTICS INC.');
+      assert.equal(document.querySelector('h1').textContent, 'HASHIMI LOGISTICS LLC');
       await page.unmount();
     });
 
@@ -478,7 +478,7 @@ describe('Phase 4 public website', () => {
   describe('SEO foundation', () => {
     test('sets title, description, robots and Open Graph tags, and omits canonical/og:image until configured', async () => {
       const page = await visit('/about');
-      assert.equal(document.title, 'About Us | HASHIMI LOGISTICS INC.');
+      assert.equal(document.title, 'About Us | HASHIMI LOGISTICS LLC');
       assert.equal(document.head.querySelector('meta[property="og:title"]').content, document.title);
       assert.equal(document.head.querySelector('meta[name="robots"]').content, 'index,follow');
       assert.equal(document.head.querySelector('link[rel="canonical"]'), null);

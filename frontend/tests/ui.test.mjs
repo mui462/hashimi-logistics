@@ -171,7 +171,7 @@ describe('frontend routing, guards, and authentication', () => {
 
   describe('every route in the specification renders inside its layout', () => {
     const publicPages = {
-      '/': 'HASHIMI LOGISTICS INC.', '/about': 'Moving Freight. Building Trust.', '/services': 'Freight Services', '/services/ltl': 'Less-Than-Truckload (LTL)', '/industries': 'Freight Expertise Across Industries',
+      '/': 'HASHIMI LOGISTICS LLC', '/about': 'Moving Freight. Building Trust.', '/services': 'Freight Services', '/services/ltl': 'Less-Than-Truckload (LTL)', '/industries': 'Freight Expertise Across Industries',
       '/industries/retail': 'Retail Freight', '/service-areas': 'Coverage Across North America', '/for-shippers': 'Your Freight. Our Coordination.', '/for-carriers': 'Grow With Hashimi Logistics',
       '/how-it-works': 'How It Works', '/track-shipment': 'Track Your Shipment', '/request-quote': 'Request a Freight Quote', '/become-a-carrier': 'Become a Carrier',
       '/carrier-resources': 'Carrier Resources', '/resources': 'Freight Resources', '/resources/x': 'Article not found', '/faq': 'Frequently Asked Questions',

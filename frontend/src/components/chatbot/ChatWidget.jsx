@@ -254,7 +254,7 @@ export default function ChatWidget() {
             </span>
             <div className="min-w-0 flex-1">
               <h2 className="truncate text-base font-extrabold leading-tight">{TITLE}</h2>
-              <p className="truncate text-xs text-steel-300">Hashimi Logistics Inc. · AI-powered</p>
+              <p className="truncate text-xs text-steel-300">Hashimi Logistics LLC · AI-powered</p>
             </div>
             <button type="button" onClick={reset} aria-label="Start a new conversation" title="New conversation" className="flex size-9 items-center justify-center rounded-full hover:bg-white/10">
               <SquarePen className="size-4" aria-hidden="true" />

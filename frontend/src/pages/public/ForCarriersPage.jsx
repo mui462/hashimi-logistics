@@ -14,7 +14,7 @@ export default function ForCarriersPage() {
   const { page: cms } = useCmsPage('for-carriers');
   return (
     <>
-      <Seo title="For Carriers" description={`Carriers: haul domestic and cross-border freight with ${brand.name} Apply online.`} path={PATHS.forCarriers} seo={cms?.seo} />
+      <Seo title="For Carriers" description={`Carriers: haul domestic and cross-border freight with ${brand.name}. Apply online.`} path={PATHS.forCarriers} seo={cms?.seo} />
       <HeroSection eyebrow="For Carriers" title={`Grow With ${brand.shortName}`} description="Partner with a brokerage that coordinates domestic and cross-border freight." scene="flatbed" actions={[{ label: brand.secondaryCta, to: PATHS.becomeCarrier }, { label: 'Carrier Resources', to: PATHS.carrierResources, variant: 'secondary' }]} cms={cms} />
       <CmsPageContent page={cms} />
       <IntroSplit

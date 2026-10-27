@@ -14,7 +14,7 @@ export default function CarrierResourcesPage() {
   const { page: cms } = useCmsPage('carrier-resources');
   return (
     <>
-      <Seo title="Carrier Resources" description={`Onboarding, documents, POD instructions and support for carriers working with ${brand.name}`} path={PATHS.carrierResources} seo={cms?.seo} />
+      <Seo title="Carrier Resources" description={`Onboarding, documents, POD instructions and support for carriers working with ${brand.name}.`} path={PATHS.carrierResources} seo={cms?.seo} />
       <HeroSection eyebrow="Carriers" title="Carrier Resources" description="What carriers need to get started and stay informed." scene="dryvan" cms={cms} />
       <CmsPageContent page={cms} />
       <SectionShell id="resources-cards" labelledBy="cr-heading">
