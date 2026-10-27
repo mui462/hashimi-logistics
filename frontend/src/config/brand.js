@@ -1,5 +1,5 @@
 export const brand = {
-  name: 'HASHIMI LOGISTICS INC.',
+  name: 'HASHIMI LOGISTICS LLC',
   shortName: 'Hashimi Logistics',
   tagline: 'Freight Brokerage & Transportation Solutions',
   supportingStatement: 'Domestic & Cross-Border Freight Solutions Across North America',

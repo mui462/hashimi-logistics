@@ -897,7 +897,7 @@ describe('website CMS', { skip: skipReason }, () => {
       assert.equal(saved.websiteTitle, 'Hashimi Logistics | Freight Brokerage');
       assert.equal(saved.canonicalBaseUrl, 'https://www.example.com');
       const open = ok(await pub('/seo'));
-      assert.equal(open.global.siteName, 'HASHIMI LOGISTICS INC.');
+      assert.equal(open.global.siteName, 'HASHIMI LOGISTICS LLC');
       assert.equal(open.global.canonicalBaseUrl, 'https://www.example.com');
       assert.equal(open.global.ogImage, 'https://cdn.example.com/og.jpg');
       refuse(await cms('/seo/global', 'PATCH', { canonicalBaseUrl: 'javascript:alert(1)' }), 422);
@@ -954,13 +954,13 @@ describe('website CMS', { skip: skipReason }, () => {
     test('company details, contact, hours, social links, branding and CTA can be saved', async () => {
       const data = ok(
         await cms('/settings', 'PATCH', {
-          companyName: 'HASHIMI LOGISTICS INC.', shortName: 'Hashimi', tagline: 'Freight Brokerage & Transportation Solutions',
+          companyName: 'HASHIMI LOGISTICS LLC', shortName: 'Hashimi', tagline: 'Freight Brokerage & Transportation Solutions',
           phone: '+1 555 010 0100', email: 'dispatch@example.com',
           address: { street: '1 Example Way', city: 'Chicago', state: 'IL', zipCode: '60601', country: 'US' },
           businessHours: [{ day: 'monday', isClosed: false, opensAt: '08:00', closesAt: '17:00' }, { day: 'sunday', isClosed: true, opensAt: '', closesAt: '' }],
           socialLinks: [{ platform: 'linkedin', url: 'https://www.linkedin.com/company/example' }],
           logo: { url: 'https://cdn.example.com/logo.svg', altText: 'Hashimi Logistics' }, favicon: { url: 'https://cdn.example.com/favicon.png' },
-          primaryCta: { label: 'Request a Quote', url: '/request-quote' }, footerText: 'Freight brokerage and transportation coordination.', copyrightText: '© HASHIMI LOGISTICS INC.',
+          primaryCta: { label: 'Request a Quote', url: '/request-quote' }, footerText: 'Freight brokerage and transportation coordination.', copyrightText: '© HASHIMI LOGISTICS LLC',
         })
       );
       assert.equal(data.exists, true);
@@ -1000,7 +1000,7 @@ describe('website CMS', { skip: skipReason }, () => {
     test('the Phase 8 settings view still works and shows the saved values', async () => {
       const view = await api('GET', '/admin/settings', { cookie: S.admin });
       assert.equal(view.status, 200);
-      assert.equal(view.body.data.settings.companyName, 'HASHIMI LOGISTICS INC.');
+      assert.equal(view.body.data.settings.companyName, 'HASHIMI LOGISTICS LLC');
     });
   });
 

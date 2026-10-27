@@ -23,7 +23,7 @@ export default function ServicesPage() {
   const items = cmsServices?.configured ? serviceCards(cmsServices.items) : services;
   return (
     <>
-      <Seo title="Freight Services" description={`Full truckload, LTL, dry van, reefer, flatbed, expedited, specialized and cross-border freight coordinated by ${brand.name}`} path={PATHS.services} seo={cms?.seo} />
+      <Seo title="Freight Services" description={`Full truckload, LTL, dry van, reefer, flatbed, expedited, specialized and cross-border freight coordinated by ${brand.name}.`} path={PATHS.services} seo={cms?.seo} />
       <HeroSection eyebrow="Services" title="Freight Services" description="Truckload and LTL transportation, domestic and cross-border, coordinated around your shipment." scene="highway" actions={[{ label: brand.primaryCta, to: PATHS.requestQuote }]} cms={cms} />
       <CmsPageContent page={cms} />
       <IntroSplit

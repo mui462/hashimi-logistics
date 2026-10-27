@@ -10,7 +10,7 @@ import path from 'node:path';
 import { after, before, describe, test } from 'node:test';
 import { createHarness, ROOT, act } from './cms-harness.mjs';
 
-const WELCOME = "Hello! Welcome to Hashimi Logistics Inc. I'm your AI assistant. I can help you understand our freight services, request a quote, explore carrier opportunities, and find answers to common logistics questions. How can I help you today?";
+const WELCOME = "Hello! Welcome to Hashimi Logistics LLC I'm your AI assistant. I can help you understand our freight services, request a quote, explore carrier opportunities, and find answers to common logistics questions. How can I help you today?";
 const SUGGESTIONS = ['I need a freight quote.', 'How can I become a carrier?', 'What freight services do you offer?', 'What areas do you serve?', 'How can I track my shipment?'];
 const answer = (reply, links = []) => ({ data: { reply, links } });
 

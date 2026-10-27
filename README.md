@@ -1,11 +1,11 @@
-# HASHIMI LOGISTICS INC.
+# HASHIMI LOGISTICS LLC
 
 **Freight Brokerage & Transportation Solutions**
 Domestic & Cross-Border Freight Solutions Across North America
 
 ## Project overview
 
-This repository is the foundation for the HASHIMI LOGISTICS INC. platform. When complete, it will contain:
+This repository is the foundation for the HASHIMI LOGISTICS LLC platform. When complete, it will contain:
 
 - a professional public brokerage website
 - a customer portal

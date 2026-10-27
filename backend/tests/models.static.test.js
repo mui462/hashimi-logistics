@@ -615,7 +615,7 @@ describe('CMS models', () => {
   test('site settings: sensible brand defaults, no invented contact details, singleton key', async () => {
     const settings = new SiteSettings({});
     await expectValid(settings);
-    assert.equal(settings.companyName, 'HASHIMI LOGISTICS INC.');
+    assert.equal(settings.companyName, 'HASHIMI LOGISTICS LLC');
     assert.equal(settings.tagline, 'Freight Brokerage & Transportation Solutions');
     for (const field of ['phone', 'email', 'address', 'copyrightText', 'timezone', 'logo']) {
       assert.equal(settings[field], undefined, `${field} must not be invented`);

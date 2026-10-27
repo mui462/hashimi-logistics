@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { sendChatMessages } from '../../services/chatService';
 
 export const WELCOME_MESSAGE =
-  "Hello! Welcome to Hashimi Logistics Inc. I'm your AI assistant. I can help you understand our freight services, request a quote, explore carrier opportunities, and find answers to common logistics questions. How can I help you today?";
+  "Hello! Welcome to Hashimi Logistics LLC. I'm your AI assistant. I can help you understand our freight services, request a quote, explore carrier opportunities, and find answers to common logistics questions. How can I help you today?";
 
 export const SUGGESTED_QUESTIONS = [
   'I need a freight quote.',

@@ -57,7 +57,7 @@ describe('delivery units (no database, no network)', () => {
     assert.ok(!email.html.includes('<script>'));
     assert.ok(!email.html.includes('<img'));
     assert.ok(email.html.includes('&lt;script&gt;'));
-    assert.ok(email.html.includes('HASHIMI LOGISTICS INC.'));
+    assert.ok(email.html.includes('HASHIMI LOGISTICS LLC'));
     assert.ok(email.html.includes('http://localhost:5173/customer/notifications'));
     assert.equal(escapeHtml('<>&"\''), '&lt;&gt;&amp;&quot;&#39;');
     for (const bad of ['https://evil.example/phish', '//evil.example', 'javascript:alert(1)', '/a b', '/"><script>', null, undefined]) assert.equal(actionUrl(bad), null, String(bad));
@@ -297,7 +297,7 @@ describe('notification delivery against a live database', { skip: skipReason }, 
       assert.equal(await flush(), 0, 'nothing is sent twice');
       const customerMail = email.calls.find((call) => call.to === 'dl.ca@example.com');
       assert.match(customerMail.subject, /quote request/i);
-      assert.ok(customerMail.html.includes('HASHIMI LOGISTICS INC.'));
+      assert.ok(customerMail.html.includes('HASHIMI LOGISTICS LLC'));
     });
 
     test('a double-triggered event queues one email per recipient and channel (idempotency key + unique index)', async () => {

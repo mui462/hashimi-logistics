@@ -10,7 +10,7 @@ const PORTALS = {
     register: 'Register as a Carrier',
     registerPrompt: 'Register as a Carrier',
     entryTitle: 'Carrier access',
-    entryDescription: 'New to HASHIMI LOGISTICS INC.? Register your carrier company. Already registered? Sign in.',
+    entryDescription: 'New to HASHIMI LOGISTICS LLC? Register your carrier company. Already registered? Sign in.',
     signIn: 'Carrier Sign In',
     other: { label: 'Customer Login', portal: 'customer', question: 'Shipping freight instead?' },
   },
@@ -20,7 +20,7 @@ const PORTALS = {
     register: 'Create a Customer Account',
     registerPrompt: 'Register as a Customer',
     entryTitle: 'Customer access',
-    entryDescription: 'New to HASHIMI LOGISTICS INC.? Create your customer account. Already have one? Sign in.',
+    entryDescription: 'New to HASHIMI LOGISTICS LLC? Create your customer account. Already have one? Sign in.',
     signIn: 'Sign In to Your Account',
     other: { label: 'Carrier Login', portal: 'carrier', question: 'Hauling freight instead?' },
   },
@@ -60,7 +60,7 @@ export default function LoginPage() {
           </div>
         ) : (
           <p>
-            New to HASHIMI LOGISTICS INC.?{' '}
+            New to HASHIMI LOGISTICS LLC?{' '}
             <Link to={PATHS.register} className="font-semibold underline underline-offset-4">
               Create an account
             </Link>

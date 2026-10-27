@@ -1,6 +1,6 @@
 import { env } from '../config/env.js';
 
-const FALLBACK_BRAND = 'HASHIMI LOGISTICS INC.';
+const FALLBACK_BRAND = 'HASHIMI LOGISTICS LLC';
 
 export const escapeHtml = (value) =>
   String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);

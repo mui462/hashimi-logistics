@@ -297,7 +297,7 @@ describe('models against a live database', { skip: skipReason }, () => {
     const second = await SiteSettings.getPrimary();
     assert.equal(String(first._id), String(second._id));
     assert.equal(await SiteSettings.countDocuments(), 1);
-    assert.equal(first.companyName, 'HASHIMI LOGISTICS INC.');
+    assert.equal(first.companyName, 'HASHIMI LOGISTICS LLC');
     await assert.rejects(SiteSettings.create({}), duplicateKey);
 
     const home = await Homepage.getPrimary();

@@ -622,7 +622,7 @@ describe('finance against a live database', { skip: skipReason }, () => {
       const text = r.buffer.toString('latin1');
       assert.ok(text.startsWith('%PDF-1.4'));
       assert.ok(text.includes(i.invoiceNumber));
-      assert.ok(text.includes('HASHIMI LOGISTICS INC.'));
+      assert.ok(text.includes('HASHIMI LOGISTICS LLC'));
       assert.ok(text.includes('1000.00 USD') && text.includes('250.00 USD') && text.includes('750.00 USD'));
       assert.ok(!/Tax ID|EIN|Remit|IBAN|routing/i.test(text), 'no invented tax or payment details');
       assert.ok(!text.includes('internalNotes'));

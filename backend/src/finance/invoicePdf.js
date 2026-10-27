@@ -14,7 +14,7 @@ const addressLine = (address) => [address?.street, address?.city, address?.state
 export function renderInvoicePdf({ invoice, company, customer, loadNumber, payments = [], overdue = false }) {
   const doc = new PdfDocument();
   const right = 545;
-  doc.text(company?.companyName || 'HASHIMI LOGISTICS INC.', { size: 16, bold: true });
+  doc.text(company?.companyName || 'HASHIMI LOGISTICS LLC', { size: 16, bold: true });
   for (const line of [addressLine(company?.address), company?.phone, company?.email].filter(Boolean)) doc.text(line, { size: 9 });
   doc.space(6);
   doc.text('INVOICE', { size: 20, bold: true, gap: 6 });

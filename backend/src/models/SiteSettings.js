@@ -81,7 +81,7 @@ function isValidTimezone(value) {
 const siteSettingsSchema = createSchema(
   {
     key: { type: String, enum: ['primary'], default: 'primary', unique: true, immutable: true },
-    companyName: requiredText(150, 'Company name', { default: 'HASHIMI LOGISTICS INC.' }),
+    companyName: requiredText(150, 'Company name', { default: 'HASHIMI LOGISTICS LLC' }),
     logo: mediaAssetSchema,
     favicon: mediaAssetSchema,
     websiteTitle: textField(120),

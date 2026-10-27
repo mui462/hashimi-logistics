@@ -2,7 +2,7 @@
   "name": "hashimi-logistics-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "API for HASHIMI LOGISTICS INC.",
+  "description": "API for HASHIMI LOGISTICS LLC",
   "type": "module",
   "engines": {
     "node": ">=20.19.0"
