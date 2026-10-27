@@ -8,13 +8,11 @@ import { cx } from '../../utils/cx';
 import { registerBanner } from '../../utils/consentStore';
 
 /**
- * Cookie consent card for the whole website. It is a small card in the corner, never a full-screen overlay.
+ * Cookie consent card for the whole website, shown full-page over a dimmed backdrop.
  *
- * - First visit: shown until the visitor chooses. The X closes it WITHOUT choosing (nothing is saved, optional cookies stay off).
- * - Closed without choosing: it stays away for the rest of the session, but comes back, asking for a choice, the moment the
- *   visitor does something that uses cookies (sign in, register, send a form: see ensureConsentChoice). Closing it again then
- *   cancels that action with a message.
- * - "Cookie settings" in the footer reopens it with the current choices; Escape closes it without changing anything.
+ * - Shown on every page load and reload until the visitor presses Reject all, Accept all or Save choices, even when an earlier
+ *   choice is already saved (that choice keeps deciding which optional cookies are on until they answer again).
+ * - "Cookie settings" in the footer reopens it with the current choices; its X and Escape close it without changing anything.
  * Rejecting is exactly as easy as accepting and nothing optional is pre-selected.
  */
 export default function CookieBanner() {
@@ -32,52 +30,72 @@ const PILL = 'inline-flex min-h-11 flex-1 items-center justify-center rounded-fu
 
 function Panel({ consent }) {
   const reopened = consent.settingsOpen;
-  const urgent = reopened || consent.required;
   const [showDetails, setShowDetails] = useState(reopened);
   const [draft, setDraft] = useState(() => ({ ...consent.choices }));
   const panelRef = useRef(null);
-  const close = reopened ? consent.closeSettings : consent.dismiss;
 
-  // Opened on purpose (footer link, or an action waiting for a choice): move focus into the card and give it back afterwards.
+  // Full-page and modal: the page behind cannot be scrolled or reached with the keyboard until a choice is made.
+  // Focus moves into the card and goes back to where it was afterwards.
   useEffect(() => {
-    if (!urgent) return undefined;
     const opener = document.activeElement;
+    const { overflow } = document.body.style;
+    document.body.style.overflow = 'hidden';
     panelRef.current?.focus();
-    return () => { if (opener?.isConnected) opener.focus?.(); };
-  }, [urgent]);
+    return () => {
+      document.body.style.overflow = overflow;
+      if (opener?.isConnected) opener.focus?.();
+    };
+  }, []);
 
-  // Escape closes it, but a first-time banner only when focus is inside it, so typing elsewhere is never interrupted.
   useEffect(() => {
     const onKeyDown = (event) => {
-      if (event.key !== 'Escape') return;
-      if (urgent || panelRef.current?.contains(document.activeElement)) close();
+      // Escape only closes the card reopened from "Cookie settings"; the first-time card needs a button press.
+      if (event.key === 'Escape' && reopened) consent.closeSettings();
+      if (event.key !== 'Tab' || !panelRef.current) return;
+      const items = [...panelRef.current.querySelectorAll('a[href], button:not([disabled]), input:not([disabled])')];
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!panelRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && (document.activeElement === first || document.activeElement === panelRef.current)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [urgent, close]);
+  }, [reopened, consent]);
 
   return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink-950/80 p-4 backdrop-blur-sm">
     <section
       ref={panelRef}
       tabIndex={-1}
       role="dialog"
-      aria-modal="false"
+      aria-modal="true"
       aria-labelledby="cookie-title"
       aria-describedby="cookie-description"
-      className="consent-rise fixed inset-x-3 bottom-3 z-50 max-h-[calc(100svh-1.5rem)] overflow-y-auto rounded-2xl border border-steel-200 bg-white text-ink-900 shadow-[0_28px_70px_-18px_rgb(0_0_0/0.55)] outline-none sm:inset-x-auto sm:bottom-5 sm:left-5 sm:w-[25rem]"
+      className="consent-rise my-auto w-full max-w-lg overflow-hidden rounded-2xl border border-steel-200 bg-white text-ink-900 shadow-[0_28px_70px_-18px_rgb(0_0_0/0.55)] outline-none"
     >
       <div className="h-1.5 bg-gradient-to-r from-signal-400 via-signal-500 to-signal-400" aria-hidden="true" />
-      <div className="relative p-5">
-        <button
-          type="button"
-          onClick={close}
-          aria-label="Close cookie banner"
-          className="absolute right-3 top-3 inline-flex size-9 items-center justify-center rounded-full text-steel-600 transition-colors hover:bg-steel-100 hover:text-ink-950"
-        >
-          <X className="size-5" aria-hidden="true" />
-        </button>
+      <div className="relative p-6 sm:p-8">
+        {reopened && (
+          <button
+            type="button"
+            onClick={consent.closeSettings}
+            aria-label="Close cookie settings"
+            className="absolute right-3 top-3 inline-flex size-9 items-center justify-center rounded-full text-steel-600 transition-colors hover:bg-steel-100 hover:text-ink-950"
+          >
+            <X className="size-5" aria-hidden="true" />
+          </button>
+        )}
 
-        <div className="flex items-start gap-3 pr-9">
+        <div className="flex items-start gap-4 pr-9">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal-400/20 text-signal-500" aria-hidden="true">
             <Cookie className="size-6" />
           </span>
@@ -139,6 +157,7 @@ function Panel({ consent }) {
         )}
       </div>
     </section>
+    </div>
   );
 }
 
