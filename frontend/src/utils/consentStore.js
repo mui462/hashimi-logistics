@@ -7,6 +7,8 @@ import { CONSENT_CATEGORIES, CONSENT_DISMISS_KEY, CONSENT_MAX_AGE_DAYS, CONSENT_
  *         'saved'  the visitor chose; `choices` says what is allowed
  *         'gpc'    no choice, but the browser sends Global Privacy Control: optional categories stay off and nobody is nagged
  *
+ * `answered` is false on every page load until a banner button is pressed, even when an earlier choice is saved: the banner shows
+ * again on each visit and reload. The saved choice still decides which optional cookies are on in the meantime.
  * `dismissed` is true when the visitor closed the banner without choosing (this browser session). `gateOpen` is true while an action
  * that uses cookies is waiting for them to choose (see ensureConsentChoice).
  *
@@ -21,6 +23,7 @@ const normalize = (choices) => Object.fromEntries(KEYS.map((key) => [key, choice
 
 let memory = null;
 let dismissedInMemory = false;
+let answeredThisLoad = false; // a banner button was pressed since this page was loaded
 let snapshot = null;
 let gate = null; // { promise, resolve } while an action waits for a choice
 let bannerCount = 0;
@@ -57,7 +60,7 @@ function isDismissed() {
 }
 
 function compute() {
-  const extra = { dismissed: isDismissed(), gateOpen: gate !== null };
+  const extra = { dismissed: isDismissed(), gateOpen: gate !== null, answered: answeredThisLoad };
   const stored = readStored();
   if (stored) return { status: 'saved', choices: normalize(stored.choices), savedAt: stored.savedAt, ...extra };
   return { status: globalPrivacyControl() ? 'gpc' : 'unset', choices: build(false), savedAt: null, ...extra };
@@ -96,6 +99,7 @@ if (typeof window !== 'undefined') {
 export function saveConsent(choices) {
   const record = { version: CONSENT_VERSION, savedAt: Date.now(), choices: normalize(choices) };
   memory = record;
+  answeredThisLoad = true;
   try {
     globalThis.localStorage?.setItem(CONSENT_STORAGE_KEY, JSON.stringify(record));
   } catch {
@@ -151,6 +155,7 @@ export const rejectAll = () => saveConsent(build(false));
 export function clearConsent() {
   memory = null;
   dismissedInMemory = false;
+  answeredThisLoad = false;
   try {
     globalThis.localStorage?.removeItem(CONSENT_STORAGE_KEY);
     globalThis.sessionStorage?.removeItem(CONSENT_DISMISS_KEY);
