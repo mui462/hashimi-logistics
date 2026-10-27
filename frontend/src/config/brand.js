@@ -16,7 +16,7 @@ export const contactDetails = {
   address: '',
   mcNumber: '',
   dotNumber: '',
-  businessHours: '',
+  businessHours: 'Open 24/7',
 };
 
 // Social profile URLs. Only entries with a URL are rendered.
